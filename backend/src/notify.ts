@@ -4,7 +4,7 @@ import { esc, sendMail } from "./mailer";
 
 /** Does a listing satisfy a member's saved filters? (null filter = any) */
 export function matches(s: SavedSearch, p: Property) {
-  if (!p.published || p.type !== s.type) return false;
+  if (p.status !== "available" || p.type !== s.type) return false;
   if (s.district && p.district !== s.district) return false;
   if (s.minPrice != null && p.priceMillion < s.minPrice) return false;
   if (s.maxPrice != null && p.priceMillion > s.maxPrice) return false;
@@ -37,7 +37,7 @@ function listingEmail(p: Property) {
  * Runs in the background — a mail failure must never fail the admin's save.
  */
 export async function notifyMatches(db: DataSource, p: Property) {
-  if (!p.published) return;
+  if (p.status !== "available") return; // deposit / sold / draft never announce; switching back to "available" does
   const searches = (await db.getRepository(SavedSearch).findBy({ type: p.type })).filter((s) => matches(s, p));
   if (!searches.length) return;
   // Only proven addresses: an unverified one may belong to someone who never asked for these emails.

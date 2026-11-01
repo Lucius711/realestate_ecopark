@@ -2,8 +2,8 @@ import { Body, Controller, Get, Headers, HttpException, Ip, NotFoundException, P
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { IsEmail, IsOptional, IsString, Length, Matches, ValidateIf } from "class-validator";
-import { Repository } from "typeorm";
-import { Lead, Project, Property, Slide, Testimonial, Video } from "./entities";
+import { In, Repository } from "typeorm";
+import { LISTED, Lead, PUBLIC, Project, Property, Slide, Testimonial, Video } from "./entities";
 import type { JwtUser } from "./auth";
 import { SlidingWindow } from "./rate-limit";
 
@@ -35,12 +35,12 @@ export class PublicController {
   @Get("properties")
   listProperties(@Query("type") type?: string) {
     if (type && !["rent", "resale", "project"].includes(type)) return [];
-    return this.props.find({ where: { published: true, ...(type ? { type: type as Property["type"] } : {}) }, order: { postedAt: "DESC" } });
+    return this.props.find({ where: { status: In(LISTED), ...(type ? { type: type as Property["type"] } : {}) }, order: { postedAt: "DESC" } });
   }
 
   @Get("properties/:code")
   async getProperty(@Param("code") code: string) {
-    const p = await this.props.findOneBy({ code, published: true });
+    const p = await this.props.findOneBy({ code, status: In(PUBLIC) }); // sold listings keep their page
     if (!p) throw new NotFoundException();
     return p;
   }

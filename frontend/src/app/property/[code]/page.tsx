@@ -16,7 +16,7 @@ import {
   TYPE_SLUG,
 } from "@/lib/api";
 import { areaLabel, pricePerM2, TYPE_LABEL } from "@/lib/format";
-import { CONTACT } from "@/lib/contact";
+import { videoFromUrl, verifiedLabel } from "@/lib/video";
 
 export const revalidate = 60;
 export const generateStaticParams = () =>
@@ -61,8 +61,10 @@ export default async function DetailPage({
 }) {
   const p = await getProperty((await params).code);
   if (!p) notFound();
+  // Same district first: for a sold / deposited listing these are the real alternatives.
   const similar = (await getProperties(p.type))
     .filter((x) => x.code !== p.code)
+    .sort((a, b) => Number(b.district === p.district) - Number(a.district === p.district))
     .slice(0, 3);
   const typeSlug = TYPE_SLUG[p.type];
 
@@ -100,9 +102,11 @@ export default async function DetailPage({
               <span className="rounded-[3px] bg-gold px-2 py-1">
                 {TYPE_LABEL[p.type]}
               </span>
-              {p.verified && (
-                <span className="rounded-[3px] bg-verified px-2 py-1">
-                  ĐÃ XÁC THỰC
+              {p.status === "deposit" && <span className="rounded-[3px] bg-[#C98A1B] px-2 py-1">ĐÃ CỌC</span>}
+              {p.status === "sold" && <span className="rounded-[3px] bg-esp px-2 py-1">ĐÃ GIAO DỊCH</span>}
+              {p.verifiedAt && (
+                <span title="Anh Tuấn đã trực tiếp kiểm tra căn này" className="rounded-[3px] bg-verified px-2 py-1">
+                  ✓ {verifiedLabel(p.verifiedAt).toUpperCase()}
                 </span>
               )}
               {p.legal && (
@@ -135,8 +139,7 @@ export default async function DetailPage({
           <Gallery
             images={p.images}
             title={p.title}
-            hasVideo={p.hasVideo}
-            videoHref={CONTACT.tiktok}
+            video={videoFromUrl(p.videoUrl, `Video review ${p.code}`, p.images[0])}
           />
         </div>
       </div>
@@ -218,11 +221,11 @@ export default async function DetailPage({
             />
           </section>
         </div>
-        <AgentCard propertyCode={p.code} />
+        <AgentCard propertyCode={p.code} status={p.status} similarHref="#similar" />
       </div>
 
       {
-        <section className="gutter flex flex-col gap-6 bg-page pb-16 pt-8">
+        <section id="similar" className="gutter flex scroll-mt-28 flex-col gap-6 bg-page pb-16 pt-8">
           <div className="flex items-end justify-between">
             <h2 className="text-[28px] font-bold text-esp">Căn tương tự</h2>
             <Link

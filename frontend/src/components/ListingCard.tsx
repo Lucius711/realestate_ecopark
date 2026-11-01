@@ -17,21 +17,23 @@ export default function ListingCard({ p }: { p: Property }) {
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-lg border border-lineL bg-white shadow-[0_6px_18px_rgba(51,38,26,0.06)] transition-shadow hover:shadow-[0_12px_28px_rgba(51,38,26,0.12)]">
       <div className="relative h-[250px] overflow-hidden">
-        <Image src={p.images[0]} alt="" fill sizes="(min-width:1280px) 384px, (min-width:768px) 50vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+        <Image src={p.images[0]} alt="" fill sizes="(min-width:1280px) 384px, (min-width:768px) 50vw, 100vw" className={`object-cover transition-transform duration-500 group-hover:scale-105 ${p.status === "sold" ? "grayscale" : ""}`} loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent from-60% to-black/45" />
         <div className="absolute inset-x-3 top-3 flex items-start justify-between">
           <div className="flex gap-1.5">
             <span className="rounded-[3px] bg-gold px-2.5 py-[5px] text-[11px] font-bold tracking-[0.08em] text-white">{TYPE_LABEL[p.type]}</span>
-            {p.verified && (
-              <span className="flex items-center gap-1 rounded-[3px] bg-white px-2 py-[5px] text-[11px] font-semibold text-verified">
-                <Icon name="check" size={12} /> Đã xác thực
+            {p.status === "deposit" && <span className="rounded-[3px] bg-[#C98A1B] px-2 py-[5px] text-[11px] font-bold tracking-[0.08em] text-white">ĐÃ CỌC</span>}
+            {p.status === "sold" && <span className="rounded-[3px] bg-esp px-2 py-[5px] text-[11px] font-bold tracking-[0.08em] text-white">ĐÃ GIAO DỊCH</span>}
+            {p.verifiedAt && p.status !== "sold" && (
+              <span title="Anh Tuấn đã trực tiếp kiểm tra căn này" className="flex items-center gap-1 rounded-[3px] bg-white px-2 py-[5px] text-[11px] font-semibold text-verified">
+                <Icon name="check" size={12} /> Đã xem thực tế
               </span>
             )}
           </div>
           <FavoriteButton code={p.code} className="relative z-10 flex size-[30px] items-center justify-center rounded-full bg-white text-esp hover:text-price" />
         </div>
         <div className="absolute inset-x-3 bottom-3 flex items-center justify-between">
-          {p.hasVideo ? (
+          {p.videoUrl ? (
             <span className="flex items-center gap-1 rounded-[3px] bg-black/55 px-2 py-1 text-[11px] font-semibold text-white">
               <Icon name="play" size={11} /> Video
             </span>

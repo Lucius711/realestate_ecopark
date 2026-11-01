@@ -3,10 +3,13 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Icon } from "../Icons";
+import VideoModal from "../VideoModal";
+import type { Video } from "@/lib/types";
 
 /** Figma 157:3708 "Gallery": large photo + 2×2 grid; last tile dims with "Xem tất cả N ảnh", big photo carries "Xem video review". */
-export default function Gallery({ images, title, hasVideo, videoHref }: { images: string[]; title: string; hasVideo: boolean; videoHref?: string }) {
+export default function Gallery({ images, title, video }: { images: string[]; title: string; video: Video | null }) {
   const [open, setOpen] = useState<number | null>(null);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     if (open === null) return;
@@ -37,10 +40,10 @@ export default function Gallery({ images, title, hasVideo, videoHref }: { images
               </button>
               {i === 0 && (
                 <div className="pointer-events-none absolute bottom-4 left-4 flex gap-2 [&>*]:pointer-events-auto">
-                  {hasVideo && videoHref && (
-                    <a href={videoHref} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-esp shadow">
+                  {video && (
+                    <button onClick={() => setPlaying(true)} className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-esp shadow">
                       <Icon name="play" size={10} /> Xem video review
-                    </a>
+                    </button>
                   )}
                   <button onClick={() => setOpen(0)} className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-esp shadow md:hidden">
                     <Icon name="cam" size={14} /> {images.length} ảnh
@@ -78,6 +81,7 @@ export default function Gallery({ images, title, hasVideo, videoHref }: { images
           </p>
         </div>
       )}
+      {playing && video && <VideoModal video={video} onClose={() => setPlaying(false)} />}
     </>
   );
 }

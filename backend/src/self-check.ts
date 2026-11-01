@@ -42,14 +42,19 @@ const post = (path: string, body: unknown, headers: Record<string, string> = {})
   assert.equal((await get("/admin/leads", admin)).status, 200, "admin reads leads");
   assert.equal((await get("/auth/me", admin)).status, 200);
 
-  // a second admin, created by the first (the only staff role)
+  // the DB directly: a second admin for the role/lockout checks (admins are only made by promoting a customer in the UI)
+  const { dbOptions } = await import("./main");
+  const { oauthUser } = await import("./oauth");
+  const { User } = await import("./entities");
+  const { hashPassword } = await import("./auth");
+  const db = await new DataSource({ ...dbOptions, synchronize: false }).initialize();
+  const users = db.getRepository(User);
   const staffName = `staff${Date.now()}`;
-  assert.equal((await post("/auth/users", { username: staffName, password: "staff-pass-123", role: "editor" }, { Authorization: `Bearer ${admin}` })).status, 400, "no editor role any more");
-  assert.equal((await post("/auth/users", { username: staffName, password: "staff-pass-123" }, { Authorization: `Bearer ${admin}` })).status, 201);
+  await users.save(users.create({ username: staffName, passwordHash: await hashPassword("staff-pass-123"), role: "admin" }));
+  assert.equal((await post("/auth/users", { username: "x" + staffName, password: "staff-pass-123" }, { Authorization: `Bearer ${admin}` })).status, 404, "no 'create admin' endpoint any more");
   const staff = (await (await login(staffName, "staff-pass-123")).json()).accessToken as string;
   assert.equal((await (await get("/auth/me", staff)).json()).role, "admin", "new account is an admin");
   assert.equal((await get("/admin/leads", staff)).status, 200, "admin reads leads");
-  assert.equal((await post("/auth/users", { username: staffName, password: "another-pass-1" }, { Authorization: `Bearer ${admin}` })).status, 409, "duplicate username");
   assert.equal((await login(staffName.toUpperCase(), "staff-pass-123")).status, 200, "username is case-insensitive");
 
   // --- members: sign-up, profile, ♡, history, alerts ---
@@ -90,14 +95,13 @@ const post = (path: string, body: unknown, headers: Record<string, string> = {})
 
   assert.equal((await get("/auth/users", admin)).status, 200, "admin lists accounts");
   assert.equal((await get("/auth/users", member)).status, 403, "member can't list accounts");
-  assert.equal((await post("/auth/users", { username: "hacker", password: "xxxxxxxxxxxx" }, auth(member))).status, 403, "member can't create admins");
 
   // --- validation on admin writes ---
   const fs = await import("fs");
   const outbox = new URL("../mail-outbox/", `file://${__dirname}/`);
   const mineOut = () => (fs.existsSync(outbox) ? fs.readdirSync(outbox).filter((f) => f.includes(memberName)).length : 0); // other test accounts may match too
   const readMail = (f: string) => fs.readFileSync(new URL(f, outbox), "utf8");
-  const listing = (code: string) => fetch(API + "/admin/properties", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${admin}` }, body: JSON.stringify({ code, type: "rent", title: "Căn alert test", priceLabel: "30 triệu/tháng", priceMillion: 30, district: "Quận Đảo", bedrooms: 4, bathrooms: 3, areaM2: 200, images: ["/images/aerial-park.webp"] }) });
+  const listing = (code: string, extra: Record<string, unknown> = {}) => fetch(API + "/admin/properties", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${admin}` }, body: JSON.stringify({ ...extra, code, type: "rent", title: "Căn alert test", priceLabel: "30 triệu/tháng", priceMillion: 30, district: "Quận Đảo", bedrooms: 4, bathrooms: 3, areaM2: 200, images: ["/images/aerial-park.webp"] }) });
   if (!process.env.RESEND_API_KEY) {
     // unverified address: no alerts
     const n0 = mineOut();
@@ -130,7 +134,20 @@ const post = (path: string, body: unknown, headers: Record<string, string> = {})
   await new Promise((r) => setTimeout(r, 500));
   if (!process.env.RESEND_API_KEY) assert.equal(mineOut(), before + 1, "no repeat email on edit");
   await fetch(API + `/admin/properties/${alertCode}`, { method: "DELETE", headers: { Authorization: `Bearer ${admin}` } });
+  if (!process.env.RESEND_API_KEY) {
+    const n1 = mineOut();
+    const dep = `DEP-${Date.now() % 100000}`;
+    await listing(dep, { status: "deposit" });
+    await new Promise((r) => setTimeout(r, 800));
+    assert.equal(mineOut(), n1, "a deposit listing sends no alert");
+    await fetch(API + `/admin/properties/${dep}`, { method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${admin}` }, body: JSON.stringify({ status: "available" }) });
+    await new Promise((r) => setTimeout(r, 800));
+    assert.equal(mineOut(), n1 + 1, "switching it to available sends it");
+    await fetch(API + `/admin/properties/${dep}`, { method: "DELETE", headers: { Authorization: `Bearer ${admin}` } });
+  }
   const customers = await (await get("/admin/customers", admin)).json();
+  const target = customers.find((c: { username: string }) => c.username === memberName);
+  assert.equal((await post(`/admin/customers/${target.id}/promote`, {}, auth(member))).status, 403, "a member can't promote anyone");
   assert(customers.some((c: { username: string; favorites: string[] }) => c.username === memberName && c.favorites.includes("ECO-1801")), "admin sees member's saved listings");
 
   // --- uploads ---
@@ -164,6 +181,19 @@ const post = (path: string, body: unknown, headers: Record<string, string> = {})
   assert.equal((await send("PUT", "/admin/properties/TEST-0001", { priceLabel: "10 triệu/tháng", priceMillion: 10 })).status, 200, "partial update");
   assert.equal((await send("PUT", "/admin/properties/TEST-0001", { title: null })).status, 400, "null can't blank a required field");
   assert.equal((await send("PUT", "/admin/properties/TEST-0001", { bedrooms: null })).status, 200, "nullable field can be cleared");
+  // listing status: what the public site shows for each state
+  const pub = async () => (await get("/properties/TEST-0001")).status;
+  const listed = async () => ((await (await get("/properties?type=rent")).json()) as { code: string }[]).some((p) => p.code === "TEST-0001");
+  assert.equal((await send("PUT", "/admin/properties/TEST-0001", { status: "draft" })).status, 200);
+  assert.deepEqual([await pub(), await listed()], [404, false], "draft: nowhere");
+  await send("PUT", "/admin/properties/TEST-0001", { status: "deposit" });
+  assert.deepEqual([await pub(), await listed()], [200, true], "deposit: still listed");
+  await send("PUT", "/admin/properties/TEST-0001", { status: "sold" });
+  assert.deepEqual([await pub(), await listed()], [200, false], "sold: page stays, off the lists");
+  assert.equal((await send("PUT", "/admin/properties/TEST-0001", { status: "gone" })).status, 400, "status enum");
+  assert.equal((await send("PUT", "/admin/properties/TEST-0001", { videoUrl: "https://evil.example/v" })).status, 400, "video link must be TikTok/YouTube");
+  assert.equal((await send("PUT", "/admin/properties/TEST-0001", { videoUrl: "https://www.youtube.com/watch?v=abcdefghijk", verifiedAt: new Date().toISOString(), pinned: true })).status, 200);
+  assert.equal((await send("PUT", "/admin/properties/TEST-0001", { verifiedAt: null, videoUrl: null })).status, 200, "clearing optional fields");
   assert.equal((await send("DELETE", "/admin/properties/TEST-0001", {})).status, 200);
   const overviewBefore = (await (await get("/projects/eco-retreat")).json()).overviewImage;
   assert.equal((await send("PUT", "/admin/projects/eco-retreat", { overviewImage: "" })).status, 200, "optional overview image can be left empty");
@@ -184,11 +214,6 @@ const post = (path: string, body: unknown, headers: Record<string, string> = {})
   assert.equal((await post("/leads", { name: "A", phone: "1-2-3-4-5-6-7", source: "footer" })).status, 400, "phone needs 8+ digits");
 
   // --- checks that need the DB directly ---
-  const { dbOptions } = await import("./main");
-  const { oauthUser } = await import("./oauth");
-  const { User } = await import("./entities");
-  const db = await new DataSource({ ...dbOptions, synchronize: false }).initialize();
-  const users = db.getRepository(User);
   // a demoted account loses access at once, even with a still-valid token
   await users.update({ username: staffName.toLowerCase() }, { role: "member" });
   assert.equal((await get("/admin/slides", staff)).status, 403, "demoted admin's token loses admin access");
@@ -199,13 +224,18 @@ const post = (path: string, body: unknown, headers: Record<string, string> = {})
   const landed = (await oauthUser(users, victim))!;
   assert.notEqual(landed.id, sq.id, "Google sign-in never lands in the account that only typed the email");
   assert.equal((await users.findOneBy({ id: sq.id }))!.email, null, "unproven claim removed");
+  // "Cấp quyền quản trị": admin promotes a customer; promoting twice is a 404 (no longer a customer)
+  assert.equal((await post(`/admin/customers/${sq.id}/promote`, {}, { Authorization: `Bearer ${admin}` })).status, 201, "promote customer");
+  const sqToken = (await (await login(squatter, "squat-pass-1")).json()).accessToken as string;
+  assert.equal((await get("/admin/leads", sqToken)).status, 200, "promoted account is an admin");
+  assert.equal((await post(`/admin/customers/${sq.id}/promote`, {}, { Authorization: `Bearer ${admin}` })).status, 404, "only customers can be promoted");
+  await users.update(sq.id, { role: "member" });
   assert.equal(landed.emailVerified, true);
   assert.equal((await oauthUser(users, victim.toUpperCase()))!.id, landed.id, "next sign-in → same account");
-  // an admin's email typed by another admin is unproven: Google sign-in with it must not open the admin account
+  // an admin whose email isn't proven (e.g. a promoted customer who typed it) can't be opened with Google
   const typo = `typo${Date.now()}@example.com`;
   const typoName = `typo${Date.now()}`;
-  assert.equal((await post("/auth/users", { username: typoName, password: "typo-pass-1234", email: typo }, { Authorization: `Bearer ${admin}` })).status, 201);
-  assert.equal((await users.findOneBy({ username: typoName }))!.emailVerified, false, "admin-typed email starts unverified");
+  await users.save(users.create({ username: typoName, email: typo, emailVerified: false, passwordHash: await hashPassword("typo-pass-1234"), role: "admin" }));
   assert.equal(await oauthUser(users, typo), null, "unverified admin email can't sign in with Google");
   assert.equal((await users.findOneBy({ username: typoName }))!.email, typo, "and the admin keeps the email (can still verify it)");
   // old-format password hashes still log in, and are upgraded to the current cost

@@ -34,7 +34,19 @@ Frontend vẫn chạy được khi API tắt: tự dùng dữ liệu mẫu `fron
 | Role | Có từ đâu | Quyền |
 |---|---|---|
 | `member` | Tự đăng ký / Google / Facebook | Lưu căn, lịch sử yêu cầu, email căn mới. Không vào được `/admin` |
-| `admin` | `npm run seed` / admin tạo | Toàn bộ: nội dung, tải ảnh, khách hàng, tài khoản |
+| `admin` | `npm run seed` / admin bấm "Cấp quyền quản trị" cho một khách | Toàn bộ: nội dung, tải ảnh, khách hàng, tài khoản |
+
+## Tình trạng căn (admin → Bất động sản)
+
+| Tình trạng | Danh sách / tìm kiếm | Trang chi tiết | Email "căn mới" |
+|---|---|---|---|
+| Đang bán / cho thuê | ✅ | ✅ | ✅ gửi |
+| Đã đặt cọc | ✅ nhãn ĐÃ CỌC | ✅ "Tìm căn tương tự" thay form đặt lịch | — |
+| Đã bán / đã cho thuê | — | ✅ dấu ĐÃ GIAO DỊCH + căn tương tự (link cũ không lỗi) | — |
+| Bản nháp | — | 404 | — |
+
+Thêm: **Link video review** (TikTok/YouTube, phát trong popup), **Anh Tuấn đã xem nhà thực tế** (lưu ngày), **Ghim lên trang chủ**.
+Dữ liệu cũ tự chuyển khi API khởi động: `published` → Đang bán / Bản nháp, `verified` → ngày đăng tin.
 
 ## Lưu trữ & email
 
@@ -67,7 +79,7 @@ Dữ liệu thử local: `npm run seed:local` — thêm căn/dự án/đánh gi�
 | GET/POST/DELETE | `/me/searches[/:id]` | thông báo căn mới |
 | POST | `/admin/uploads` | *(admin)* tải ảnh hoặc PDF → `{ url }` |
 | GET | `/admin/customers` | *(admin)* khách có tài khoản + căn họ đã lưu |
-| POST | `/auth/users` | *(admin)* tạo admin `{ username, password, email? }` — `email` chỉ để dùng Google/Facebook |
+| POST | `/admin/customers/:id/promote` | *(admin)* "Cấp quyền quản trị" — nâng một tài khoản khách lên admin |
 | GET/POST/PUT/DELETE | `/admin/:resource[/:id]` | `Authorization: Bearer <accessToken>`; resource = properties, projects, slides, videos, testimonials, leads |
 
 Màn đăng nhập: `http://localhost:3000/login`. Tài khoản admin đầu tiên tạo bằng `npm run seed` từ `ADMIN_USERNAME` / `ADMIN_PASSWORD` (và `ADMIN_EMAIL` nếu muốn đăng nhập Google/Facebook) trong `.env`.

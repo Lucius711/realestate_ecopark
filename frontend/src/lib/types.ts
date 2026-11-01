@@ -1,6 +1,8 @@
 // Shared shapes returned by the NestJS API (see backend/src/*/entities).
 
 export type PropertyType = "rent" | "resale" | "project";
+/** available: listed · deposit: listed with "ĐÃ CỌC" · sold: page only, "ĐÃ GIAO DỊCH" · draft: hidden (admin only). */
+export type PropertyStatus = "available" | "deposit" | "sold" | "draft";
 
 export interface Property {
   code: string;
@@ -17,8 +19,13 @@ export interface Property {
   landArea: boolean;
   floorLabel: string;
   images: string[];
-  hasVideo: boolean;
-  verified: boolean;
+  /** TikTok / YouTube review; plays in a popup. */
+  videoUrl: string | null;
+  /** When anh Tuấn saw the place in person; null = not yet. */
+  verifiedAt: string | null;
+  status: PropertyStatus;
+  /** First in the homepage "Nổi bật" rows. */
+  pinned: boolean;
   description: string;
   direction?: string | null;
   furniture?: string | null;

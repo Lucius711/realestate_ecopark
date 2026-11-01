@@ -39,11 +39,11 @@ export const SLUG_TYPE: Record<string, PropertyType> = {
 
 export const getProperties = (type?: PropertyType) =>
   get<Property[]>(type ? `/properties?type=${type}` : "/properties", () =>
-    S.properties.filter((p) => !type || p.type === type),
+    S.properties.filter((p) => (p.status === "available" || p.status === "deposit") && (!type || p.type === type)),
   );
 
 export const getProperty = (code: string) =>
-  get<Property | null>(`/properties/${encodeURIComponent(code)}`, () => S.properties.find((p) => p.code === code) ?? null);
+  get<Property | null>(`/properties/${encodeURIComponent(code)}`, () => S.properties.find((p) => p.code === code && p.status !== "draft") ?? null);
 
 export const getSlides = () => get<Slide[]>("/slides", () => S.slides.filter((s) => s.active));
 export const getVideos = () => get<Video[]>("/videos", () => S.videos);

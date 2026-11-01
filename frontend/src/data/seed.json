@@ -19,14 +19,16 @@
         "/images/flower-bridge.webp",
         "/images/forest-rays.webp"
       ],
-      "hasVideo": true,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Quận Đảo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Đông Nam",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-28T08:00:00.000Z"
+      "postedAt": "2026-10-28T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-28T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1802",
@@ -47,14 +49,16 @@
         "/images/forest-rays.webp",
         "/images/sunset-road.webp"
       ],
-      "hasVideo": false,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Tây Bắc",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-27T08:00:00.000Z"
+      "postedAt": "2026-10-27T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-27T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": true
     },
     {
       "code": "ECO-1803",
@@ -75,14 +79,16 @@
         "/images/sunset-road.webp",
         "/images/morning-jog.webp"
       ],
-      "hasVideo": true,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Rừng Cọ, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Đông Nam",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-26T08:00:00.000Z"
+      "postedAt": "2026-10-26T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-26T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1804",
@@ -103,14 +109,16 @@
         "/images/morning-jog.webp",
         "/images/towers-bougainvillea.webp"
       ],
-      "hasVideo": false,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Sáng tạo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Tây Bắc",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-25T08:00:00.000Z"
+      "postedAt": "2026-10-25T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-25T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1805",
@@ -131,14 +139,16 @@
         "/images/towers-bougainvillea.webp",
         "/images/evening-street.webp"
       ],
-      "hasVideo": true,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Đông Nam",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-24T08:00:00.000Z"
+      "postedAt": "2026-10-24T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-24T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1806",
@@ -159,14 +169,16 @@
         "/images/evening-street.webp",
         "/images/aerial-park.webp"
       ],
-      "hasVideo": false,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Rừng Cọ, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Tây Bắc",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-23T08:00:00.000Z"
+      "postedAt": "2026-10-23T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-23T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1809",
@@ -187,14 +199,16 @@
         "/images/aerial-park.webp",
         "/images/flower-bridge.webp"
       ],
-      "hasVideo": true,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Sáng tạo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Đông Nam",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-22T08:00:00.000Z"
+      "postedAt": "2026-10-22T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-22T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1810",
@@ -215,14 +229,16 @@
         "/images/flower-bridge.webp",
         "/images/forest-rays.webp"
       ],
-      "hasVideo": false,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Tây Bắc",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-21T08:00:00.000Z"
+      "postedAt": "2026-10-21T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-21T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1811",
@@ -243,14 +259,16 @@
         "/images/forest-rays.webp",
         "/images/sunset-road.webp"
       ],
-      "hasVideo": true,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Quận Đảo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Đông Nam",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-20T08:00:00.000Z"
+      "postedAt": "2026-10-20T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-20T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1812",
@@ -271,14 +289,16 @@
         "/images/sunset-road.webp",
         "/images/morning-jog.webp"
       ],
-      "hasVideo": false,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Tây Bắc",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-19T08:00:00.000Z"
+      "postedAt": "2026-10-19T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-19T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1813",
@@ -299,14 +319,16 @@
         "/images/morning-jog.webp",
         "/images/towers-bougainvillea.webp"
       ],
-      "hasVideo": true,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Quận Đảo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Đông Nam",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-18T08:00:00.000Z"
+      "postedAt": "2026-10-18T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-18T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1814",
@@ -327,14 +349,16 @@
         "/images/towers-bougainvillea.webp",
         "/images/evening-street.webp"
       ],
-      "hasVideo": false,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Rừng Cọ, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Tây Bắc",
       "furniture": "Đầy đủ",
       "legal": "Sổ hồng",
       "projectSlug": null,
-      "postedAt": "2026-10-17T08:00:00.000Z"
+      "postedAt": "2026-10-17T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-17T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1821",
@@ -355,14 +379,16 @@
         "/images/evening-street.webp",
         "/images/aerial-park.webp"
       ],
-      "hasVideo": true,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Sáng tạo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Đông Nam",
       "furniture": "Cơ bản",
       "legal": "HĐMB",
       "projectSlug": null,
-      "postedAt": "2026-10-16T08:00:00.000Z"
+      "postedAt": "2026-10-16T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-16T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1822",
@@ -383,14 +409,16 @@
         "/images/aerial-park.webp",
         "/images/flower-bridge.webp"
       ],
-      "hasVideo": false,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Tây Bắc",
       "furniture": "Cơ bản",
       "legal": "HĐMB",
       "projectSlug": null,
-      "postedAt": "2026-10-15T08:00:00.000Z"
+      "postedAt": "2026-10-15T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-15T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1823",
@@ -411,14 +439,16 @@
         "/images/flower-bridge.webp",
         "/images/forest-rays.webp"
       ],
-      "hasVideo": true,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Đông Nam",
       "furniture": "Cơ bản",
       "legal": "HĐMB",
       "projectSlug": null,
-      "postedAt": "2026-10-14T08:00:00.000Z"
+      "postedAt": "2026-10-14T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-14T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1824",
@@ -439,14 +469,16 @@
         "/images/forest-rays.webp",
         "/images/sunset-road.webp"
       ],
-      "hasVideo": false,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Sáng tạo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Tây Bắc",
       "furniture": "Cơ bản",
       "legal": "HĐMB",
       "projectSlug": null,
-      "postedAt": "2026-10-13T08:00:00.000Z"
+      "postedAt": "2026-10-13T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-13T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1825",
@@ -467,14 +499,16 @@
         "/images/sunset-road.webp",
         "/images/morning-jog.webp"
       ],
-      "hasVideo": true,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Rừng Cọ, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Đông Nam",
       "furniture": "Cơ bản",
       "legal": "HĐMB",
       "projectSlug": "eco-retreat",
-      "postedAt": "2026-10-12T08:00:00.000Z"
+      "postedAt": "2026-10-12T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-12T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     },
     {
       "code": "ECO-1826",
@@ -495,14 +529,16 @@
         "/images/morning-jog.webp",
         "/images/towers-bougainvillea.webp"
       ],
-      "hasVideo": false,
-      "verified": true,
       "description": "Căn vị trí đẹp tại phân khu Quận Đảo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
       "direction": "Tây Bắc",
       "furniture": "Cơ bản",
       "legal": "HĐMB",
       "projectSlug": "eco-retreat",
-      "postedAt": "2026-10-11T08:00:00.000Z"
+      "postedAt": "2026-10-11T08:00:00.000Z",
+      "status": "available",
+      "verifiedAt": "2026-10-11T08:00:00.000Z",
+      "videoUrl": null,
+      "pinned": false
     }
   ],
   "slides": [

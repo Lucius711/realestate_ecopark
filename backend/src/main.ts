@@ -40,14 +40,27 @@ export const dbOptions = {
 const JWT_SECRET = process.env.JWT_SECRET ?? "";
 
 /**
- * The "editor" role was removed: such accounts become customers (they keep no admin access) before schema sync,
- * whose new role check would otherwise reject them. Safe to run every start; a no-op once done.
+ * Data changes schema sync can't do on its own, run before it. Each step is a no-op once done, so it's safe every start.
+ * - "editor" role removed → those accounts become customers (no admin access), or the new role check would reject them.
+ * - Property published/verified/hasVideo checkboxes → status / verifiedAt (sync alone would drop the old columns' data).
  */
-// shortcut: one-off data migration run on every start; delete once production has started with this version.
-export async function dropEditorRole() {
+// shortcut: one-off data migrations run on every start; delete once production has started with this version.
+export async function migrateLegacyData() {
   const db = await new DataSource({ ...dbOptions, synchronize: false }).initialize();
   try {
-    if ((await db.query(`SELECT to_regclass('users') AS t`))[0].t) await db.query(`UPDATE users SET role = 'member' WHERE role = 'editor'`);
+    const has = async (table: string, column?: string) =>
+      column
+        ? (await db.query(`SELECT 1 FROM information_schema.columns WHERE table_name = $1 AND column_name = $2`, [table, column])).length > 0
+        : Boolean((await db.query(`SELECT to_regclass($1) AS t`, [table]))[0].t);
+    if (await has("users")) await db.query(`UPDATE users SET role = 'member' WHERE role = 'editor'`);
+    if (await has("properties", "published")) {
+      await db.transaction(async (t) => {
+        await t.query(`ALTER TABLE properties ADD COLUMN IF NOT EXISTS status varchar NOT NULL DEFAULT 'available', ADD COLUMN IF NOT EXISTS "verifiedAt" timestamptz`);
+        await t.query(`UPDATE properties SET status = CASE WHEN published THEN 'available' ELSE 'draft' END, "verifiedAt" = CASE WHEN verified THEN "postedAt" END`);
+        await t.query(`ALTER TABLE properties DROP COLUMN published, DROP COLUMN verified, DROP COLUMN IF EXISTS "hasVideo"`);
+      });
+      console.log("[migrate] properties: published/verified → status/verifiedAt");
+    }
   } finally {
     await db.destroy();
   }
@@ -67,7 +80,7 @@ class AppModule {}
 
 async function bootstrap() {
   if (JWT_SECRET.length < 32) throw new Error("JWT_SECRET must be set and at least 32 characters (see .env.example)");
-  await dropEditorRole();
+  await migrateLegacyData();
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.disable("x-powered-by");
   const https = (process.env.API_PUBLIC_URL ?? "").startsWith("https");

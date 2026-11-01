@@ -6,15 +6,26 @@ import { useEffect } from "react";
 import { Icon, type IconName } from "../Icons";
 import { displayName, isAdmin, token, useMe, type Me } from "@/lib/auth";
 
-const NAV: { href: string; label: string; icon: IconName }[] = [
-  { href: "/admin", label: "Tổng quan", icon: "grid" },
-  { href: "/admin/leads", label: "Khách hàng", icon: "user" },
-  { href: "/admin/properties", label: "Bất động sản", icon: "tag" },
-  { href: "/admin/projects", label: "Dự án", icon: "map" },
-  { href: "/admin/slides", label: "Slider trang chủ", icon: "image" },
-  { href: "/admin/videos", label: "Video", icon: "play" },
-  { href: "/admin/testimonials", label: "Đánh giá", icon: "star" },
-  { href: "/admin/users", label: "Tài khoản", icon: "check" },
+// Grouped by what anh Tuấn is doing: selling, dressing the homepage, managing access.
+const NAV: { group: string; items: { href: string; label: string; icon: IconName }[] }[] = [
+  {
+    group: "Bán hàng",
+    items: [
+      { href: "/admin", label: "Tổng quan", icon: "grid" },
+      { href: "/admin/leads", label: "Khách hàng", icon: "user" },
+      { href: "/admin/properties", label: "Bất động sản", icon: "tag" },
+      { href: "/admin/projects", label: "Dự án", icon: "map" },
+    ],
+  },
+  {
+    group: "Trang chủ",
+    items: [
+      { href: "/admin/slides", label: "Slider", icon: "image" },
+      { href: "/admin/videos", label: "Video", icon: "play" },
+      { href: "/admin/testimonials", label: "Đánh giá khách", icon: "star" },
+    ],
+  },
+  { group: "Hệ thống", items: [{ href: "/admin/users", label: "Tài khoản quản trị", icon: "check" }] },
 ];
 
 /** Admin chrome: sidebar (tabs on mobile) + top bar. Sends signed-out visitors to /login?next=… */
@@ -44,15 +55,20 @@ export default function AdminShell({ children }: { children: (me: Me) => React.R
           <span className="text-[9px] tracking-[0.3em] text-soft">QUẢN TRỊ WEBSITE</span>
         </Link>
         <nav className="no-scrollbar flex gap-1 overflow-x-auto px-3 pb-3 lg:flex-col lg:overflow-visible" aria-label="Quản trị">
-          {NAV.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              aria-current={active(n.href) ? "page" : undefined}
-              className={`flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded px-3 py-2.5 text-[13px] font-medium ${active(n.href) ? "bg-gold text-white" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
-            >
-              <Icon name={n.icon} size={16} /> {n.label}
-            </Link>
+          {NAV.map((g) => (
+            <div key={g.group} className="flex gap-1 lg:flex-col">
+              <p className="hidden px-3 pb-1 pt-4 text-[10px] font-bold uppercase tracking-[0.14em] text-white/40 lg:block">{g.group}</p>
+              {g.items.map((n) => (
+                <Link
+                  key={n.href}
+                  href={n.href}
+                  aria-current={active(n.href) ? "page" : undefined}
+                  className={`flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded px-3 py-2.5 text-[13px] font-medium ${active(n.href) ? "bg-gold text-white" : "text-white/80 hover:bg-white/10 hover:text-white"}`}
+                >
+                  <Icon name={n.icon} size={16} /> {n.label}
+                </Link>
+              ))}
+            </div>
           ))}
         </nav>
       </aside>

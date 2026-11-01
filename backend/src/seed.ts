@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { dbOptions, dropEditorRole } from "./main";
+import { dbOptions, migrateLegacyData } from "./main";
 import { Lead, Project, Property, Slide, Testimonial, User, Video } from "./entities";
 import { hashPassword } from "./auth";
 import { check, type Resource } from "./dto";
@@ -30,7 +30,7 @@ async function run() {
         throw new Error(`seed ${table}[${i}] invalid: ${JSON.stringify(e.getResponse?.().message ?? e.message)}`);
       });
     }
-  await dropEditorRole();
+  await migrateLegacyData();
   const db = await new DataSource({ ...dbOptions, synchronize: true }).initialize();
   await db.getRepository(Property).save(s.properties as never);
   await db.getRepository(Project).save(s.projects as never);

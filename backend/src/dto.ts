@@ -1,5 +1,6 @@
 import { BadRequestException } from "@nestjs/common";
 import { uploadBase } from "./uploads";
+import { PROPERTY_STATUSES } from "./entities";
 import { Type, plainToInstance } from "class-transformer";
 import {
   ArrayMaxSize,
@@ -45,6 +46,7 @@ const SLUG_MSG = { message: "$property chỉ gồm chữ thường, số và d�
 const LINK = /^(\/[\w\-./?=&%#]*|https:\/\/[^\s]+)$/;
 
 export const PROPERTY_TYPES = ["rent", "resale", "project"] as const;
+const VIDEO_URL = /^https:\/\/(www\.|m\.)?(tiktok\.com|youtube\.com|youtu\.be)\/\S*$/;
 export const VIDEO_PLATFORMS = ["tiktok", "youtube"] as const;
 export const LEAD_STATUSES = ["new", "contacted", "closed"] as const;
 
@@ -61,14 +63,15 @@ export class PropertyDto {
   @IsOptional() @IsBoolean() landArea?: boolean;
   @IsOptional() @IsString() @Length(0, 50) floorLabel?: string;
   @IsArray() @ArrayMinSize(1) @ArrayMaxSize(30) @SiteImage(true) images: string[];
-  @IsOptional() @IsBoolean() hasVideo?: boolean;
-  @IsOptional() @IsBoolean() verified?: boolean;
+  @IsOptional() @Matches(VIDEO_URL, { message: "videoUrl phải là link https TikTok hoặc YouTube" }) @Length(1, 300) videoUrl: string | null;
+  @IsOptional() @IsDateString() verifiedAt: string | null;
   @IsOptional() @IsString() @Length(0, 5000) description?: string;
   @IsOptional() @IsString() @Length(1, 50) direction: string | null;
   @IsOptional() @IsString() @Length(1, 50) furniture: string | null;
   @IsOptional() @IsString() @Length(1, 50) legal: string | null;
   @IsOptional() @Matches(SLUG, SLUG_MSG) @Length(1, 60) projectSlug: string | null;
-  @IsOptional() @IsBoolean() published?: boolean;
+  @IsOptional() @IsIn(PROPERTY_STATUSES) status?: (typeof PROPERTY_STATUSES)[number];
+  @IsOptional() @IsBoolean() pinned?: boolean;
   @IsOptional() @IsDateString() postedAt?: string;
 }
 
@@ -125,7 +128,7 @@ export class SlideDto {
 export class VideoDto {
   @IsIn(VIDEO_PLATFORMS) platform: (typeof VIDEO_PLATFORMS)[number];
   @IsString() @Length(1, 150) title: string;
-  @Matches(/^https:\/\/(www\.|m\.)?(tiktok\.com|youtube\.com|youtu\.be)\/\S*$/, { message: "url phải là link https TikTok hoặc YouTube" }) @Length(1, 300) url: string;
+  @Matches(VIDEO_URL, { message: "url phải là link https TikTok hoặc YouTube" }) @Length(1, 300) url: string;
   @IsOptional() @Matches(/^[A-Za-z0-9_-]{5,40}$/, { message: "embedId không hợp lệ" }) embedId: string | null;
   @SiteImage() thumbnail: string;
   @IsOptional() @IsString() @Length(0, 20) views?: string;

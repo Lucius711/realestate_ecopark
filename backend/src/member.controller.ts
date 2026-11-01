@@ -4,7 +4,7 @@ import { IsEmail, IsIn, IsInt, IsNumber, IsOptional, IsString, Length, Matches, 
 import { DataSource, In, Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
 import { JwtGuard, Roles, profileOf, sendVerifyEmail, type JwtUser } from "./auth";
-import { Favorite, Lead, Property, SavedSearch, User } from "./entities";
+import { Favorite, LISTED, Lead, PUBLIC, Property, SavedSearch, User } from "./entities";
 import { PROPERTY_TYPES } from "./dto";
 
 type Req = { user: JwtUser };
@@ -76,14 +76,14 @@ export class MemberController {
   @Get("favorites")
   async favorites(@Req() req: Req) {
     const favs = await this.favs.find({ where: { userId: req.user.sub }, order: { createdAt: "DESC" } });
-    const props = await this.db.getRepository(Property).findBy({ code: In(favs.map((f) => f.propertyCode)), published: true });
+    const props = await this.db.getRepository(Property).findBy({ code: In(favs.map((f) => f.propertyCode)), status: In(PUBLIC) }); // a sold ♡ stays, marked "ĐÃ GIAO DỊCH"
     const byCode = new Map(props.map((p) => [p.code, p]));
     return favs.flatMap((f) => (byCode.has(f.propertyCode) ? [byCode.get(f.propertyCode)!] : []));
   }
 
   @Post("favorites/:code")
   async addFavorite(@Req() req: Req, @Param("code") code: string) {
-    if (!(await this.db.getRepository(Property).findOneBy({ code, published: true }))) throw new NotFoundException("Không tìm thấy căn");
+    if (!(await this.db.getRepository(Property).findOneBy({ code, status: In(LISTED) }))) throw new NotFoundException("Không tìm thấy căn");
     await this.favs.upsert({ userId: req.user.sub, propertyCode: code }, ["userId", "propertyCode"]);
     return { saved: true };
   }
@@ -133,6 +133,18 @@ export class MemberController {
 @Roles("admin")
 export class CustomersController {
   constructor(private db: DataSource) {}
+
+  /** "Cấp quyền quản trị": turns a customer account (e.g. one made by "Tiếp tục với Google") into an admin. */
+  @Post(":id/promote")
+  async promote(@Param("id", ParseIntPipe) id: number) {
+    const users = this.db.getRepository(User);
+    const u = await users.findOneBy({ id, role: "member" });
+    if (!u) throw new NotFoundException("Không tìm thấy tài khoản khách");
+    // Google sign-in opens an admin only through a proven email, so warn instead of silently granting a dead login.
+    if (!u.username && !(u.email && u.emailVerified)) throw new BadRequestException("Tài khoản này chưa có cách đăng nhập (chưa xác minh email, không có mật khẩu)");
+    await users.update(id, { role: "admin" });
+    return { ...profileOf({ ...u, role: "admin" }) };
+  }
 
   @Get()
   async list() {

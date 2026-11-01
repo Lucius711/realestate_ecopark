@@ -4,7 +4,19 @@ import { Check, Column, CreateDateColumn, Entity, Index, PrimaryColumn, PrimaryG
 
 // Shapes mirror frontend/src/lib/types.ts — keep both in sync.
 
+/**
+ * available: on the site + new-listing emails · deposit: on the site with an "ĐÃ CỌC" badge, no emails ·
+ * sold: off the lists, its page stays up with "ĐÃ GIAO DỊCH" (old shared links keep working) · draft: nowhere (404).
+ */
+export const PROPERTY_STATUSES = ["available", "deposit", "sold", "draft"] as const;
+export type PropertyStatus = (typeof PROPERTY_STATUSES)[number];
+/** Shown in listings / search / favorites. */
+export const LISTED: PropertyStatus[] = ["available", "deposit"];
+/** Has a public page. */
+export const PUBLIC: PropertyStatus[] = ["available", "deposit", "sold"];
+
 @Entity("properties")
+@Check(`"status" IN ('available','deposit','sold','draft')`)
 @Check(`"type" IN ('rent','resale','project') AND "priceMillion" >= 0 AND "areaM2" > 0 AND ("bedrooms" IS NULL OR "bedrooms" >= 0) AND ("bathrooms" IS NULL OR "bathrooms" >= 0)`)
 export class Property {
   @PrimaryColumn() code: string;
@@ -19,14 +31,18 @@ export class Property {
   @Column({ default: false }) landArea: boolean;
   @Column({ default: "" }) floorLabel: string;
   @Column("jsonb", { default: [] }) images: string[];
-  @Column({ default: false }) hasVideo: boolean;
-  @Column({ default: false }) verified: boolean;
+  /** TikTok / YouTube review of this listing; plays in a popup on the detail page. */
+  @Column("varchar", { nullable: true }) videoUrl: string | null;
+  /** When anh Tuấn saw the place in person ("Đã xem thực tế"); null = not yet. */
+  @Column("timestamptz", { nullable: true }) verifiedAt: Date | null;
   @Column("text", { default: "" }) description: string;
   @Column("varchar", { nullable: true }) direction: string | null;
   @Column("varchar", { nullable: true }) furniture: string | null;
   @Column("varchar", { nullable: true }) legal: string | null;
   @Index() @Column("varchar", { nullable: true }) projectSlug: string | null;
-  @Column({ default: true }) published: boolean;
+  @Index() @Column({ default: "available" }) status: PropertyStatus;
+  /** Always first in the homepage "Nổi bật" rows. */
+  @Column({ default: false }) pinned: boolean;
   @Column("timestamptz", { default: () => "now()" }) postedAt: Date;
 }
 

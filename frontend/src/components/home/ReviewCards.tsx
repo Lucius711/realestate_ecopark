@@ -46,7 +46,8 @@ export default function ReviewCards({
                 className="flex animate-fadeIn flex-col gap-5 bg-esp2 p-8"
               >
                 <Icon name="quoteMark" size={28} className="text-gold" />
-                <blockquote className="text-[13px] leading-[1.9] text-[#D8CDBE]">
+                {/* flex-1: quotes of any length push avatar + stars to the same line in both cards */}
+                <blockquote className="flex-1 text-[13px] leading-[1.9] text-[#D8CDBE]">
                   {it.quote}
                 </blockquote>
                 <figcaption className="flex items-center gap-3.5">

@@ -49,6 +49,17 @@ export default function LeadsManager() {
       load();
     }
   }
+  async function promote(c: Customer) {
+    const who = c.fullName || c.username || c.email;
+    if (!window.confirm(`Cấp quyền quản trị cho "${who}"?\nTài khoản này sẽ xem được khách hàng và sửa toàn bộ website.`)) return;
+    try {
+      await adminFetch(`/admin/customers/${c.id}/promote`, { method: "POST" });
+      setErr("");
+      load();
+    } catch (e) {
+      setErr((e as Error).message);
+    }
+  }
   async function remove(l: Lead) {
     if (!window.confirm(`Xoá yêu cầu của "${l.name}"?`)) return;
     await adminFetch(`/admin/leads/${l.id}`, { method: "DELETE" }).catch((e) => setErr((e as Error).message));
@@ -154,7 +165,7 @@ export default function LeadsManager() {
           <table className="w-full min-w-[760px] text-left text-[13px]">
             <thead className="bg-cream text-[11px] uppercase tracking-[0.06em] text-muted">
               <tr>
-                {["Khách", "Liên hệ", "Căn đã lưu", "Yêu cầu", "Thông báo", "Ngày tạo"].map((h) => (
+                {["Khách", "Liên hệ", "Căn đã lưu", "Yêu cầu", "Thông báo", "Ngày tạo", ""].map((h) => (
                   <th key={h} className="px-4 py-3 font-semibold">
                     {h}
                   </th>
@@ -194,6 +205,11 @@ export default function LeadsManager() {
                   <td className="px-4 py-3">{c.requests}</td>
                   <td className="px-4 py-3">{c.alerts}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-muted">{when(c.createdAt)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right">
+                    <button onClick={() => promote(c)} className="text-[12px] font-semibold text-gold hover:text-esp">
+                      Cấp quyền quản trị
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

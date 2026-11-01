@@ -118,13 +118,6 @@ export class LoginDto {
   @IsString() @Length(1, 200) password: string;
 }
 
-export class CreateUserDto {
-  @Matches(USERNAME, { message: "Tên đăng nhập 3–32 ký tự, chỉ gồm chữ, số, . _ -" }) username: string;
-  /** Optional: lets this account also use "Tiếp tục với Google / Facebook". */
-  @IsOptional() @IsEmail({}, { message: "Email không hợp lệ" }) @Length(0, 120) email?: string;
-  @IsString() @Length(10, 200) password: string;
-}
-
 const PHONE = /^(?=(?:\D*\d){8,15}\D*$)[0-9 +().-]{8,20}$/;
 
 /** Public sign-up: always creates a member (customer) account; staff accounts come only from POST /auth/users. */
@@ -240,20 +233,5 @@ export class AuthController {
   async listUsers() {
     const users = await this.users.find({ order: { id: "ASC" } });
     return users.map((u) => ({ ...profileOf(u), createdAt: u.createdAt }));
-  }
-
-  /** Admin adds another admin account. */
-  @Post("users")
-  @UseGuards(JwtGuard)
-  @Roles("admin")
-  async createUser(@Body() dto: CreateUserDto) {
-    const username = dto.username.toLowerCase();
-    const email = dto.email?.toLowerCase() ?? null;
-    if (await this.users.findOneBy({ username })) throw new ConflictException("Tên đăng nhập đã tồn tại");
-    if (email && (await this.users.findOneBy({ email }))) throw new ConflictException("Email đã gắn với tài khoản khác");
-    // The email only enables Google/Facebook sign-in once its owner clicks the link we send (guards against typos).
-    const u = await this.users.save(this.users.create({ username, email, emailVerified: false, passwordHash: await hashPassword(dto.password), role: "admin" }));
-    await sendVerifyEmail(this.jwt, u).catch((e) => console.error("[verify-email]", e));
-    return { id: u.id, username: u.username, email: u.email, role: u.role };
   }
 }
