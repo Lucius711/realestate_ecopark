@@ -1,0 +1,824 @@
+{
+  "properties": [
+    {
+      "code": "ECO-1801",
+      "type": "rent",
+      "title": "Studio Sky Oasis full nội thất",
+      "priceLabel": "7 triệu/tháng",
+      "priceMillion": 7,
+      "district": "Quận Đảo",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "areaM2": 32,
+      "landArea": false,
+      "floorLabel": "Tầng cao",
+      "images": [
+        "/images/towers-bougainvillea.webp",
+        "/images/evening-street.webp",
+        "/images/aerial-park.webp",
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp"
+      ],
+      "hasVideo": true,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Quận Đảo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Đông Nam",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-28T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1802",
+      "type": "rent",
+      "title": "Căn 2PN Aqua Bay ban công rộng",
+      "priceLabel": "12 triệu/tháng",
+      "priceMillion": 12,
+      "district": "Aquabay",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "areaM2": 68,
+      "landArea": false,
+      "floorLabel": "Tầng trung",
+      "images": [
+        "/images/evening-street.webp",
+        "/images/aerial-park.webp",
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp",
+        "/images/sunset-road.webp"
+      ],
+      "hasVideo": false,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Tây Bắc",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-27T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1803",
+      "type": "rent",
+      "title": "Căn 1PN Park River view sông",
+      "priceLabel": "9 triệu/tháng",
+      "priceMillion": 9,
+      "district": "Rừng Cọ",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "areaM2": 45,
+      "landArea": false,
+      "floorLabel": "Tầng 18",
+      "images": [
+        "/images/aerial-park.webp",
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp",
+        "/images/sunset-road.webp",
+        "/images/morning-jog.webp"
+      ],
+      "hasVideo": true,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Rừng Cọ, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Đông Nam",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-26T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1804",
+      "type": "rent",
+      "title": "Căn 2PN Swan Lake Onsen",
+      "priceLabel": "15 triệu/tháng",
+      "priceMillion": 15,
+      "district": "Sáng tạo",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "areaM2": 76,
+      "landArea": false,
+      "floorLabel": "Tầng 12",
+      "images": [
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp",
+        "/images/sunset-road.webp",
+        "/images/morning-jog.webp",
+        "/images/towers-bougainvillea.webp"
+      ],
+      "hasVideo": false,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Sáng tạo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Tây Bắc",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-25T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1805",
+      "type": "rent",
+      "title": "Căn 3PN West Bay góc",
+      "priceLabel": "18 triệu/tháng",
+      "priceMillion": 18,
+      "district": "Aquabay",
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "areaM2": 98,
+      "landArea": false,
+      "floorLabel": "Tầng 20",
+      "images": [
+        "/images/forest-rays.webp",
+        "/images/sunset-road.webp",
+        "/images/morning-jog.webp",
+        "/images/towers-bougainvillea.webp",
+        "/images/evening-street.webp"
+      ],
+      "hasVideo": true,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Đông Nam",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-24T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1806",
+      "type": "rent",
+      "title": "Biệt thự Rừng Cọ sân vườn",
+      "priceLabel": "45 triệu/tháng",
+      "priceMillion": 45,
+      "district": "Rừng Cọ",
+      "bedrooms": 5,
+      "bathrooms": 5,
+      "areaM2": 300,
+      "landArea": true,
+      "floorLabel": "3 tầng",
+      "images": [
+        "/images/sunset-road.webp",
+        "/images/morning-jog.webp",
+        "/images/towers-bougainvillea.webp",
+        "/images/evening-street.webp",
+        "/images/aerial-park.webp"
+      ],
+      "hasVideo": false,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Rừng Cọ, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Tây Bắc",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-23T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1809",
+      "type": "resale",
+      "title": "Căn 2PN Swan Lake Onsen",
+      "priceLabel": "3,85 tỷ",
+      "priceMillion": 3850,
+      "district": "Sáng tạo",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "areaM2": 76,
+      "landArea": false,
+      "floorLabel": "Tầng 12",
+      "images": [
+        "/images/morning-jog.webp",
+        "/images/towers-bougainvillea.webp",
+        "/images/evening-street.webp",
+        "/images/aerial-park.webp",
+        "/images/flower-bridge.webp"
+      ],
+      "hasVideo": true,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Sáng tạo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Đông Nam",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-22T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1810",
+      "type": "resale",
+      "title": "Căn 3PN West Bay góc",
+      "priceLabel": "4,6 tỷ",
+      "priceMillion": 4600,
+      "district": "Aquabay",
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "areaM2": 98,
+      "landArea": false,
+      "floorLabel": "Tầng 20",
+      "images": [
+        "/images/towers-bougainvillea.webp",
+        "/images/evening-street.webp",
+        "/images/aerial-park.webp",
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp"
+      ],
+      "hasVideo": false,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Tây Bắc",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-21T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1811",
+      "type": "resale",
+      "title": "Căn 1PN Sky Oasis",
+      "priceLabel": "2,1 tỷ",
+      "priceMillion": 2100,
+      "district": "Quận Đảo",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "areaM2": 45,
+      "landArea": false,
+      "floorLabel": "Tầng 25",
+      "images": [
+        "/images/evening-street.webp",
+        "/images/aerial-park.webp",
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp",
+        "/images/sunset-road.webp"
+      ],
+      "hasVideo": true,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Quận Đảo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Đông Nam",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-20T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1812",
+      "type": "resale",
+      "title": "Shophouse Thủy Nguyên",
+      "priceLabel": "9,5 tỷ",
+      "priceMillion": 9500,
+      "district": "Aquabay",
+      "bedrooms": 4,
+      "bathrooms": 4,
+      "areaM2": 90,
+      "landArea": true,
+      "floorLabel": "4 tầng",
+      "images": [
+        "/images/aerial-park.webp",
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp",
+        "/images/sunset-road.webp",
+        "/images/morning-jog.webp"
+      ],
+      "hasVideo": false,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Tây Bắc",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-19T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1813",
+      "type": "resale",
+      "title": "Biệt thự song lập Grand The Island",
+      "priceLabel": "15 tỷ",
+      "priceMillion": 15000,
+      "district": "Quận Đảo",
+      "bedrooms": 4,
+      "bathrooms": 4,
+      "areaM2": 200,
+      "landArea": true,
+      "floorLabel": "3 tầng",
+      "images": [
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp",
+        "/images/sunset-road.webp",
+        "/images/morning-jog.webp",
+        "/images/towers-bougainvillea.webp"
+      ],
+      "hasVideo": true,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Quận Đảo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Đông Nam",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-18T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1814",
+      "type": "resale",
+      "title": "Biệt thự đơn lập Rừng Cọ",
+      "priceLabel": "28 tỷ",
+      "priceMillion": 28000,
+      "district": "Rừng Cọ",
+      "bedrooms": 5,
+      "bathrooms": 5,
+      "areaM2": 300,
+      "landArea": true,
+      "floorLabel": "3 tầng",
+      "images": [
+        "/images/forest-rays.webp",
+        "/images/sunset-road.webp",
+        "/images/morning-jog.webp",
+        "/images/towers-bougainvillea.webp",
+        "/images/evening-street.webp"
+      ],
+      "hasVideo": false,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Rừng Cọ, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Tây Bắc",
+      "furniture": "Đầy đủ",
+      "legal": "Sổ hồng",
+      "projectSlug": null,
+      "postedAt": "2026-10-17T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1821",
+      "type": "project",
+      "title": "Căn 2PN mới mở bán",
+      "priceLabel": "Từ 3,2 tỷ",
+      "priceMillion": 3200,
+      "district": "Sáng tạo",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "areaM2": 70,
+      "landArea": false,
+      "floorLabel": "Bàn giao 2027",
+      "images": [
+        "/images/sunset-road.webp",
+        "/images/morning-jog.webp",
+        "/images/towers-bougainvillea.webp",
+        "/images/evening-street.webp",
+        "/images/aerial-park.webp"
+      ],
+      "hasVideo": true,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Sáng tạo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Đông Nam",
+      "furniture": "Cơ bản",
+      "legal": "HĐMB",
+      "projectSlug": null,
+      "postedAt": "2026-10-16T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1822",
+      "type": "project",
+      "title": "Căn 3PN view hồ",
+      "priceLabel": "Từ 4,8 tỷ",
+      "priceMillion": 4800,
+      "district": "Aquabay",
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "areaM2": 95,
+      "landArea": false,
+      "floorLabel": "Bàn giao 2027",
+      "images": [
+        "/images/morning-jog.webp",
+        "/images/towers-bougainvillea.webp",
+        "/images/evening-street.webp",
+        "/images/aerial-park.webp",
+        "/images/flower-bridge.webp"
+      ],
+      "hasVideo": false,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Tây Bắc",
+      "furniture": "Cơ bản",
+      "legal": "HĐMB",
+      "projectSlug": null,
+      "postedAt": "2026-10-15T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1823",
+      "type": "project",
+      "title": "Studio đầu tư cho thuê",
+      "priceLabel": "Từ 1,9 tỷ",
+      "priceMillion": 1900,
+      "district": "Aquabay",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "areaM2": 35,
+      "landArea": false,
+      "floorLabel": "Bàn giao 2026",
+      "images": [
+        "/images/towers-bougainvillea.webp",
+        "/images/evening-street.webp",
+        "/images/aerial-park.webp",
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp"
+      ],
+      "hasVideo": true,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Aquabay, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Đông Nam",
+      "furniture": "Cơ bản",
+      "legal": "HĐMB",
+      "projectSlug": null,
+      "postedAt": "2026-10-14T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1824",
+      "type": "project",
+      "title": "Shophouse khối đế",
+      "priceLabel": "Từ 12 tỷ",
+      "priceMillion": 12000,
+      "district": "Sáng tạo",
+      "bedrooms": null,
+      "bathrooms": null,
+      "areaM2": 120,
+      "landArea": false,
+      "floorLabel": "Kinh doanh · 2 tầng",
+      "images": [
+        "/images/evening-street.webp",
+        "/images/aerial-park.webp",
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp",
+        "/images/sunset-road.webp"
+      ],
+      "hasVideo": false,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Sáng tạo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Tây Bắc",
+      "furniture": "Cơ bản",
+      "legal": "HĐMB",
+      "projectSlug": null,
+      "postedAt": "2026-10-13T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1825",
+      "type": "project",
+      "title": "Liền kề vườn",
+      "priceLabel": "Từ 18 tỷ",
+      "priceMillion": 18000,
+      "district": "Rừng Cọ",
+      "bedrooms": 4,
+      "bathrooms": 4,
+      "areaM2": 150,
+      "landArea": true,
+      "floorLabel": "3 tầng",
+      "images": [
+        "/images/aerial-park.webp",
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp",
+        "/images/sunset-road.webp",
+        "/images/morning-jog.webp"
+      ],
+      "hasVideo": true,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Rừng Cọ, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Đông Nam",
+      "furniture": "Cơ bản",
+      "legal": "HĐMB",
+      "projectSlug": "eco-retreat",
+      "postedAt": "2026-10-12T08:00:00.000Z"
+    },
+    {
+      "code": "ECO-1826",
+      "type": "project",
+      "title": "Biệt thự đảo",
+      "priceLabel": "Từ 35 tỷ",
+      "priceMillion": 35000,
+      "district": "Quận Đảo",
+      "bedrooms": 5,
+      "bathrooms": 6,
+      "areaM2": 350,
+      "landArea": true,
+      "floorLabel": "3 tầng",
+      "images": [
+        "/images/flower-bridge.webp",
+        "/images/forest-rays.webp",
+        "/images/sunset-road.webp",
+        "/images/morning-jog.webp",
+        "/images/towers-bougainvillea.webp"
+      ],
+      "hasVideo": false,
+      "verified": true,
+      "description": "Căn vị trí đẹp tại phân khu Quận Đảo, Ecopark. Thông tin, giá và hình ảnh là dữ liệu mẫu — anh Tuấn cập nhật trong trang quản trị.",
+      "direction": "Tây Bắc",
+      "furniture": "Cơ bản",
+      "legal": "HĐMB",
+      "projectSlug": "eco-retreat",
+      "postedAt": "2026-10-11T08:00:00.000Z"
+    }
+  ],
+  "slides": [
+    {
+      "id": 1,
+      "title": "ECO RETREAT",
+      "location": "Long An · 220 ha",
+      "description": "Khu đô thị nghỉ dưỡng sinh thái phía Tây TP.HCM. Biệt thự, liền kề, căn hộ.",
+      "image": "/images/aerial-park.webp",
+      "link": "/projects/eco-retreat",
+      "sortOrder": 1,
+      "active": true
+    },
+    {
+      "id": 2,
+      "title": "HÀNG DỰ ÁN ECOPARK",
+      "location": "Văn Giang · Hưng Yên",
+      "description": "Căn hộ mới mở bán, chính sách thanh toán giãn, hỗ trợ vay ưu đãi.",
+      "image": "/images/towers-bougainvillea.webp",
+      "link": "/properties/projects",
+      "sortOrder": 2,
+      "active": true
+    },
+    {
+      "id": 3,
+      "title": "PHÂN KHU MỚI",
+      "location": "Ecopark · Đang cập nhật",
+      "description": "Anh Tuấn cập nhật quỹ căn đẹp ngay khi chủ đầu tư công bố.",
+      "image": "/images/flower-bridge.webp",
+      "link": "/properties/projects",
+      "sortOrder": 3,
+      "active": true
+    }
+  ],
+  "videos": [
+    {
+      "id": 1,
+      "platform": "tiktok",
+      "title": "Review 2PN Swan Lake",
+      "url": "https://www.tiktok.com/@thegreennest77",
+      "embedId": null,
+      "thumbnail": "/images/sunset-road.webp",
+      "views": "18,2K",
+      "duration": null,
+      "featured": true
+    },
+    {
+      "id": 2,
+      "platform": "tiktok",
+      "title": "Studio 7tr/tháng",
+      "url": "https://www.tiktok.com/@thegreennest77",
+      "embedId": null,
+      "thumbnail": "/images/towers-bougainvillea.webp",
+      "views": "13,2K",
+      "duration": null,
+      "featured": true
+    },
+    {
+      "id": 3,
+      "platform": "tiktok",
+      "title": "1 ngày ở Ecopark",
+      "url": "https://www.tiktok.com/@thegreennest77",
+      "embedId": null,
+      "thumbnail": "/images/evening-street.webp",
+      "views": "30,2K",
+      "duration": null,
+      "featured": true
+    },
+    {
+      "id": 4,
+      "platform": "tiktok",
+      "title": "Biệt thự Rừng Cọ",
+      "url": "https://www.tiktok.com/@thegreennest77",
+      "embedId": null,
+      "thumbnail": "/images/forest-rays.webp",
+      "views": "29,2K",
+      "duration": null,
+      "featured": true
+    },
+    {
+      "id": 5,
+      "platform": "tiktok",
+      "title": "Phố Hàn Quốc",
+      "url": "https://www.tiktok.com/@thegreennest77",
+      "embedId": null,
+      "thumbnail": "/images/forest-rays.webp",
+      "views": "7,2K",
+      "duration": null,
+      "featured": true
+    },
+    {
+      "id": 6,
+      "platform": "tiktok",
+      "title": "Có nên mua Aqua Bay?",
+      "url": "https://www.tiktok.com/@thegreennest77",
+      "embedId": null,
+      "thumbnail": "/images/aerial-park.webp",
+      "views": "37,2K",
+      "duration": null,
+      "featured": true
+    },
+    {
+      "id": 7,
+      "platform": "tiktok",
+      "title": "Bể bơi Onsen",
+      "url": "https://www.tiktok.com/@thegreennest77",
+      "embedId": null,
+      "thumbnail": "/images/flower-bridge.webp",
+      "views": "40,2K",
+      "duration": null,
+      "featured": true
+    },
+    {
+      "id": 8,
+      "platform": "tiktok",
+      "title": "Đạp xe quanh hồ",
+      "url": "https://www.tiktok.com/@thegreennest77",
+      "embedId": null,
+      "thumbnail": "/images/sunset-road.webp",
+      "views": "41,2K",
+      "duration": null,
+      "featured": true
+    },
+    {
+      "id": 9,
+      "platform": "tiktok",
+      "title": "Shophouse Thủy Nguyên",
+      "url": "https://www.tiktok.com/@thegreennest77",
+      "embedId": null,
+      "thumbnail": "/images/towers-bougainvillea.webp",
+      "views": "42,2K",
+      "duration": null,
+      "featured": true
+    },
+    {
+      "id": 10,
+      "platform": "tiktok",
+      "title": "Bàn giao nhà",
+      "url": "https://www.tiktok.com/@thegreennest77",
+      "embedId": null,
+      "thumbnail": "/images/evening-street.webp",
+      "views": "34,2K",
+      "duration": null,
+      "featured": true
+    },
+    {
+      "id": 100,
+      "platform": "youtube",
+      "title": "Toàn cảnh Ecopark 2026 – nên mua phân khu nào?",
+      "url": "https://www.youtube.com/",
+      "embedId": null,
+      "thumbnail": "/images/evening-street.webp",
+      "views": "5,2K",
+      "duration": null,
+      "featured": false
+    },
+    {
+      "id": 101,
+      "platform": "youtube",
+      "title": "So sánh 6 phân khu",
+      "url": "https://www.youtube.com/",
+      "embedId": null,
+      "thumbnail": "/images/aerial-park.webp",
+      "views": "5,2K",
+      "duration": null,
+      "featured": false
+    },
+    {
+      "id": 102,
+      "platform": "youtube",
+      "title": "Thủ tục chuyển nhượng",
+      "url": "https://www.youtube.com/",
+      "embedId": null,
+      "thumbnail": "/images/flower-bridge.webp",
+      "views": "5,2K",
+      "duration": null,
+      "featured": false
+    },
+    {
+      "id": 103,
+      "platform": "youtube",
+      "title": "West Bay sau 3 năm",
+      "url": "https://www.youtube.com/",
+      "embedId": null,
+      "thumbnail": "/images/forest-rays.webp",
+      "views": "5,2K",
+      "duration": null,
+      "featured": false
+    },
+    {
+      "id": 104,
+      "platform": "youtube",
+      "title": "Chính sách tháng này",
+      "url": "https://www.youtube.com/",
+      "embedId": null,
+      "thumbnail": "/images/sunset-road.webp",
+      "views": "5,2K",
+      "duration": null,
+      "featured": false
+    }
+  ],
+  "testimonials": [
+    {
+      "id": 1,
+      "name": "Chị Minh Anh",
+      "deal": "Mua căn 2PN · Swan Lake",
+      "quote": "Anh Tuấn dẫn chúng tôi xem 4 căn trong một buổi sáng, phân tích rõ ưu nhược từng căn. Cuối cùng chốt được căn 2PN view hồ đúng ngân sách — thủ tục nhanh gọn, không phát sinh chi phí.",
+      "avatar": null,
+      "rating": 5
+    },
+    {
+      "id": 2,
+      "name": "Anh Đức Hoàng",
+      "deal": "Cho thuê Studio · Sky Oasis",
+      "quote": "Gia đình tôi ở nước ngoài, mọi việc cho thuê căn hộ đều được anh Tuấn lo trọn: tìm khách, làm hợp đồng, bàn giao. Ba năm nay chưa phải lo lắng gì.",
+      "avatar": null,
+      "rating": 5
+    }
+  ],
+  "projects": [
+    {
+      "slug": "eco-retreat",
+      "name": "ECO RETREAT",
+      "location": "Long An",
+      "address": "Xã Thanh Phú, huyện Bến Lức, tỉnh Long An",
+      "areaHa": 220,
+      "summary": "Khu đô thị nghỉ dưỡng sinh thái 220 ha của Tập đoàn Ecopark tại Bến Lức, phía Tây TP.HCM.",
+      "overview": "Eco Retreat nằm ven sông Vàm Cỏ, giáp cao tốc TP.HCM – Trung Lương. Dự án mang mô hình xanh, mật độ thấp của Ecopark vào phía Nam với biệt thự, liền kề và căn hộ, cùng hệ tiện ích nghỉ dưỡng: bể bơi nước mặn, spa, khu khoáng nóng, vườn yoga.",
+      "heroImage": "/images/aerial-park.webp",
+      "facts": [
+        {
+          "value": "220 ha",
+          "label": "Tổng diện tích"
+        },
+        {
+          "value": "~40%",
+          "label": "Mật độ xây dựng"
+        },
+        {
+          "value": "Biệt thự · Liền kề",
+          "label": "Thấp tầng"
+        },
+        {
+          "value": "Căn hộ",
+          "label": "Cao tầng"
+        },
+        {
+          "value": "Sổ hồng",
+          "label": "Lâu dài cho người Việt"
+        }
+      ],
+      "productTypes": [
+        {
+          "name": "BIỆT THỰ",
+          "description": "Sân vườn riêng, view sông và cảnh quan",
+          "image": "/images/morning-jog.webp"
+        },
+        {
+          "name": "LIỀN KỀ",
+          "description": "Thấp tầng, phù hợp gia đình trẻ",
+          "image": "/images/sunset-road.webp"
+        },
+        {
+          "name": "CĂN HỘ",
+          "description": "Căn hộ cao tầng trong khu nghỉ dưỡng",
+          "image": "/images/towers-bougainvillea.webp"
+        }
+      ],
+      "amenities": [
+        {
+          "name": "Bể bơi nước mặn",
+          "image": "/images/aerial-park.webp"
+        },
+        {
+          "name": "Spa & detox",
+          "image": "/images/forest-rays.webp"
+        },
+        {
+          "name": "Khu khoáng nóng",
+          "image": "/images/flower-bridge.webp"
+        },
+        {
+          "name": "Vườn yoga",
+          "image": "/images/morning-jog.webp"
+        },
+        {
+          "name": "Vườn BBQ",
+          "image": "/images/evening-street.webp"
+        },
+        {
+          "name": "Nhà hàng ven sông",
+          "image": "/images/sunset-road.webp"
+        }
+      ],
+      "policies": [
+        {
+          "title": "Thanh toán theo tiến độ",
+          "detail": "Chia nhiều đợt theo tiến độ xây dựng — chi tiết theo bảng giá từng đợt.",
+          "image": "/images/towers-bougainvillea.webp"
+        },
+        {
+          "title": "Hỗ trợ vay ngân hàng",
+          "detail": "Liên kết ngân hàng hỗ trợ vay, ân hạn gốc lãi theo chính sách từng thời điểm.",
+          "image": "/images/evening-street.webp"
+        },
+        {
+          "title": "Chiết khấu thanh toán sớm",
+          "detail": "Ưu đãi khi thanh toán nhanh — anh Tuấn gửi bảng tính cụ thể qua Zalo.",
+          "image": "/images/sunset-road.webp"
+        }
+      ],
+      "mapQuery": "Eco Retreat Bến Lức Long An",
+      "sourceNote": "Thông tin tổng hợp từ báo chí — cần chủ đầu tư/anh Tuấn xác nhận trước khi đăng.",
+      "tagline": "Nghỉ dưỡng mỗi ngày",
+      "overviewImage": "/images/towers-bougainvillea.webp",
+      "brochure": "/brochures/eco-retreat.pdf"
+    }
+  ]
+}

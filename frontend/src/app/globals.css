@@ -1,0 +1,56 @@
+@import "@fontsource-variable/manrope";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white font-sans text-ink antialiased;
+}
+
+@layer components {
+  /* Side gutter used by every full-width band: 120px on desktop as in Figma. */
+  .gutter {
+    @apply px-4 md:px-10 xl:px-[120px];
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2.5 rounded-[2px] px-[26px] py-[14px] text-[13px] font-semibold uppercase tracking-[0.12em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold;
+  }
+  .btn-gold {
+    @apply btn bg-gold text-white hover:bg-[#9c7a44];
+  }
+  .btn-dark {
+    @apply btn bg-esp text-white hover:bg-black;
+  }
+  .btn-ghost {
+    @apply btn border border-creamT/90 text-white hover:bg-white/10;
+  }
+  .eyebrow {
+    @apply text-[16px] font-bold tracking-[0.02em] text-esp;
+  }
+  .display {
+    @apply text-[36px] font-extrabold leading-[1.2] text-esp md:text-[52px];
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

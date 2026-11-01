@@ -1,0 +1,12 @@
+# Local database: `docker compose up -d`
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ecopark
+      POSTGRES_PASSWORD: ecopark
+      POSTGRES_DB: ecopark
+    ports: ["127.0.0.1:5432:5432"] # local machine only, not the LAN
+    volumes: [pgdata:/var/lib/postgresql/data]
+volumes:
+  pgdata:
