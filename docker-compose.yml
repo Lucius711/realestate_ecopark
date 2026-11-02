@@ -1,4 +1,6 @@
-# Local database: `docker compose up -d`
+# Local:      docker compose up -d                → only PostgreSQL (db)
+# Production: docker compose up -d api nginx certbot → API + HTTPS on the OVH VPS (GitHub Actions does this on each push)
+#   needs backend/.env.prod, cloudflare.ini and ./.env (API_DOMAIN, LETSENCRYPT_EMAIL; API_IMAGE is set by the workflow).
 services:
   db:
     image: postgres:16-alpine
@@ -8,5 +10,41 @@ services:
       POSTGRES_DB: ecopark
     ports: ["127.0.0.1:5432:5432"] # local machine only, not the LAN
     volumes: [pgdata:/var/lib/postgresql/data]
+
+  api:
+    profiles: [prod]
+    image: ${API_IMAGE:-ecopark-api}
+    build: { context: ., dockerfile: backend/Dockerfile }
+    env_file: backend/.env.prod
+    restart: unless-stopped
+
+  # HTTPS in front of the API; only Cloudflare may connect (see nginx.conf).
+  nginx:
+    profiles: [prod]
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      API_DOMAIN: ${API_DOMAIN:-localhost}
+    volumes:
+      - ./nginx.conf:/etc/nginx/templates/default.conf.template:ro
+      - ./cloudflare.conf:/etc/nginx/cloudflare.conf:ro
+      - letsencrypt:/etc/letsencrypt:ro
+    # Reload every 6h so a certificate renewed by certbot is picked up.
+    entrypoint: ["/bin/sh", "-c", "(while :; do sleep 6h; nginx -s reload; done) & exec /docker-entrypoint.sh nginx -g 'daemon off;'"]
+    depends_on: [api]
+
+  # Let's Encrypt via the Cloudflare DNS challenge (no port 80 needed, works with the orange cloud on).
+  # First certificate: the deploy workflow runs "certbot certonly"; this container renews it every 12h if due.
+  certbot:
+    profiles: [prod]
+    image: certbot/dns-cloudflare
+    restart: unless-stopped
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - ./cloudflare.ini:/cloudflare.ini:ro
+    entrypoint: ["/bin/sh", "-c", "trap exit TERM; while :; do certbot renew --quiet; sleep 12h & wait $$!; done"]
+
 volumes:
   pgdata:
+  letsencrypt:
