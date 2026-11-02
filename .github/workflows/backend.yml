@@ -76,10 +76,16 @@ jobs:
           TOKEN: ${{ secrets.GITHUB_TOKEN }} # provided by GitHub automatically, used to pull the image
         run: |
           mkdir -p ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+          # tr: a key pasted from Windows has \r line endings, which ssh rejects.
+          printf '%s\n' "$SSH_KEY" | tr -d '\r' > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+          ssh-keygen -y -f ~/.ssh/id_ed25519 > /dev/null || { echo "::error::VPS_SSH_KEY is not a usable private key: paste the whole file incl. BEGIN/END lines, key without passphrase"; exit 1; }
+          echo "Deploy key: $(ssh-keygen -lf ~/.ssh/id_ed25519)"
+          # BatchMode: fail at once instead of asking for a password nobody can type.
+          printf 'Host vps\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/id_ed25519\n  IdentitiesOnly yes\n  BatchMode yes\n' "$HOST" "$USER" > ~/.ssh/config
           ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
-          scp docker-compose.yml nginx.conf "$USER@$HOST:ecopark/"
-          ssh "$USER@$HOST" bash -s <<EOF
+          ssh vps 'mkdir -p ecopark/backend' || { echo "::error::SSH refused: add the public key to ~/.ssh/authorized_keys of user '$USER' on the VPS"; exit 1; }
+          scp docker-compose.yml nginx.conf vps:ecopark/
+          ssh vps bash -s <<EOF
           set -euo pipefail
           cd ~/ecopark
           # Created once by hand on the VPS (see README → Deploy): .env, backend/.env.prod, cloudflare.ini
