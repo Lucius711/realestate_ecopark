@@ -6,7 +6,7 @@ import { useState, type FormEvent } from "react";
 import { SocialButtons, inputCls, labelCls } from "./AuthShell";
 import PasswordInput from "./PasswordInput";
 import { safeNext } from "./LoginForm";
-import { authRequest } from "@/lib/auth";
+import { apiFetch } from "@/lib/auth";
 
 type F = { fullName: string; username: string; phone: string; email: string; password: string; confirm: string };
 
@@ -21,7 +21,7 @@ function validate(f: F) {
   return e;
 }
 
-/** /register: creates a customer (member) account, signs in, then goes to ?next= or /account. */
+/** /register: creates a customer (member) account, then sends them to /login to sign in with it (keeps ?next=). */
 export default function RegisterForm() {
   const router = useRouter();
   const next = safeNext(useSearchParams().get("next"));
@@ -42,8 +42,9 @@ export default function RegisterForm() {
     setBusy(true);
     try {
       const body = Object.fromEntries(Object.entries(f).filter(([k, x]) => k !== "confirm" && x)); // empty optional fields left out
-      await authRequest("register", body);
-      router.replace(next ?? "/account");
+      await apiFetch("/auth/register", { method: "POST", body }); // the returned token is ignored on purpose: sign in next
+      const q = new URLSearchParams({ registered: "1", username: f.username, ...(next ? { next } : {}) });
+      router.replace(`/login?${q}`);
     } catch (err) {
       setError((err as Error).message);
       setBusy(false);

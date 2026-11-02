@@ -14,7 +14,9 @@ export const safeNext = (v: string | null) => (v && v.startsWith("/") && !v.star
 /** /login for everyone: customers land on /account, staff on /admin (unless ?next= says otherwise). */
 export default function LoginForm() {
   const router = useRouter();
-  const next = safeNext(useSearchParams().get("next"));
+  const params = useSearchParams();
+  const next = safeNext(params.get("next"));
+  const justRegistered = params.get("registered") === "1"; // set by /register
   const me = useMe();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -82,6 +84,12 @@ export default function LoginForm() {
         <p className="text-[14px] text-muted">Lưu căn yêu thích, theo dõi yêu cầu và nhận thông báo căn mới tại Ecopark.</p>
       </div>
 
+      {justRegistered && !error && (
+        <p role="status" className="rounded border border-verified/30 bg-[#E8F3EC] px-4 py-3 text-[13px] text-verified">
+          ✓ Đăng ký thành công. Vui lòng đăng nhập bằng tài khoản vừa tạo.
+        </p>
+      )}
+
       {error && (
         <p role="alert" className="rounded border border-price/30 bg-price/5 px-4 py-3 text-[13px] text-price">
           {error}
@@ -91,11 +99,11 @@ export default function LoginForm() {
       <form onSubmit={onSubmit} className="flex flex-col gap-4">
         <label className={labelCls}>
           Tên đăng nhập
-          <input name="username" required maxLength={64} autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder="vd: minhanh" className={inputCls} />
+          <input name="username" required maxLength={64} defaultValue={params.get("username") ?? ""} autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder="vd: minhanh" className={inputCls} />
         </label>
         <label className={labelCls}>
           Mật khẩu
-          <PasswordInput name="password" required maxLength={200} autoComplete="current-password" placeholder="••••••••" />
+          <PasswordInput name="password" required maxLength={200} autoComplete="current-password" placeholder="••••••••" autoFocus={justRegistered} />
         </label>
         <button disabled={busy} className="btn-dark h-12 justify-center disabled:opacity-60">
           {busy ? "ĐANG ĐĂNG NHẬP…" : "ĐĂNG NHẬP"}
