@@ -66,6 +66,7 @@ export class Project {
   @Column() mapQuery: string;
   @Column("varchar", { nullable: true }) brochure: string | null;
   @Column("text", { default: "" }) sourceNote: string;
+  @CreateDateColumn({ type: "timestamptz" }) createdAt: Date;
 }
 
 /** "Dự án đang mở bán" homepage slider — admin edits these. */

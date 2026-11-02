@@ -45,6 +45,9 @@ export const getProperty = (code: string) =>
 export const getSlides = () => get<Slide[]>("/slides", () => S.slides.filter((s) => s.active));
 export const getVideos = () => get<Video[]>("/videos", () => S.videos);
 export const getTestimonials = () => get<Testimonial[]>("/testimonials", () => S.testimonials);
+export type ProjectCard = Pick<Project, "slug" | "name" | "location" | "summary" | "heroImage">;
+/** Newest project (homepage banner), or null when there are none. */
+export const getLatestProject = () => get<ProjectCard[]>("/projects", () => S.projects).then((l) => l[0] ?? null);
 export const getProject = (slug: string) =>
   get<Project | null>(`/projects/${slug}`, () => S.projects.find((p) => p.slug === slug) ?? null);
 export const seedProjects = S.projects;

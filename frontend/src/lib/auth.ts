@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, createElement, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, createElement, useCallback, useContext, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 import { API } from "./api";
 
 export type Me = { id: number; username: string | null; email: string | null; emailVerified: boolean; role: "admin" | "member"; fullName: string | null; phone: string | null };
@@ -70,13 +70,40 @@ export async function authRequest(path: "login" | "register", body: Record<strin
   return data.user;
 }
 
+// Last known profile, so the header and /admin render signed-in at once instead of flashing
+// "checking…" on every page; /auth/me still re-checks in the background (the API enforces roles anyway).
+const ME_KEY = "ecopark_me";
+let memo: Me | null | undefined; // survives client-side navigation
+function cached(): Me | null | undefined {
+  if (!token.get()) return null;
+  try {
+    return JSON.parse(localStorage.getItem(ME_KEY) ?? "null") ?? undefined;
+  } catch {
+    return undefined;
+  }
+}
+function remember(me: Me | null) {
+  memo = me;
+  try {
+    if (me) localStorage.setItem(ME_KEY, JSON.stringify(me));
+    else localStorage.removeItem(ME_KEY);
+  } catch {
+    /* storage blocked */
+  }
+}
+
 function useMeState(enabled: boolean) {
-  const [me, setMe] = useState<Me | null | undefined>(undefined);
+  const [me, setMe] = useState<Me | null | undefined>(memo);
+  // Before the first paint (no flicker); the server render can't see localStorage, so this can't go in useState.
+  useLayoutEffect(() => {
+    if (enabled && memo === undefined) setMe(cached());
+  }, [enabled]);
   useEffect(() => {
     if (!enabled) return;
     const load = async () => {
-      if (!token.get()) return setMe(null);
-      setMe(await apiFetch<Me>("/auth/me").catch(() => null));
+      const fresh = token.get() ? await apiFetch<Me>("/auth/me").catch(() => null) : null;
+      remember(fresh);
+      setMe(fresh);
     };
     load();
     window.addEventListener(EVENT, load);

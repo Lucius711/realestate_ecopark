@@ -5,15 +5,17 @@ import { Icon } from "../Icons";
 import Empty from "../Empty";
 import type { Property, PropertyType } from "@/lib/types";
 import type { Dict } from "@/lib/i18n";
-import { TYPE_SLUG } from "@/lib/api";
+import { TYPE_SLUG, type ProjectCard } from "@/lib/api";
 
-/** Figma: "Featured properties" – Eco Retreat banner + 3 carousels (rent / resale / project). */
+/** Figma: "Featured properties" – newest-project banner (hidden when there is none) + 3 carousels (rent / resale / project). */
 export default function Featured({
   t,
   byType,
+  project,
 }: {
   t: Dict["featured"];
   byType: Record<PropertyType, Property[]>;
+  project: ProjectCard | null;
 }) {
   return (
     <section
@@ -25,25 +27,28 @@ export default function Featured({
         <h2 className="display">{t.title}</h2>
       </div>
 
-      <div className="gutter pb-2 pt-14">
-        <Link
-          href="/projects/eco-retreat"
-          className="group flex flex-wrap items-center justify-between gap-6 overflow-hidden rounded-md bg-[linear-gradient(90deg,rgba(26,20,15,.9),rgba(26,20,15,.36)_60%,transparent),url(/images/aerial-park.webp)] bg-cover bg-center px-6 py-9 md:px-10"
-        >
-          <span className="flex flex-col gap-2">
-            <span className="self-start rounded-[2px] bg-gold px-2.5 py-[5px] text-[11px] font-bold tracking-[0.14em] text-white">
-              {t.eco.badge}
+      {project && (
+        <div className="gutter pb-2 pt-14">
+          <Link
+            href={`/projects/${project.slug}`}
+            style={{ backgroundImage: `linear-gradient(90deg,rgba(26,20,15,.9),rgba(26,20,15,.36) 60%,transparent),url("${project.heroImage}")` }}
+            className="group flex flex-wrap items-center justify-between gap-6 overflow-hidden rounded-md bg-cover bg-center px-6 py-9 md:px-10"
+          >
+            <span className="flex flex-col gap-2">
+              <span className="self-start rounded-[2px] bg-gold px-2.5 py-[5px] text-[11px] font-bold tracking-[0.14em] text-white">
+                {t.eco.badge}
+              </span>
+              <span className="text-[24px] font-extrabold uppercase text-white md:text-[32px]">
+                {project.name} · {project.location}
+              </span>
+              <span className="line-clamp-2 max-w-[640px] text-[15px] text-creamT">{project.summary}</span>
             </span>
-            <span className="text-[24px] font-extrabold text-white md:text-[32px]">
-              {t.eco.title}
+            <span className="btn-gold">
+              {t.eco.cta} <Icon name="arrow" size={16} />
             </span>
-            <span className="text-[15px] text-creamT">{t.eco.sub}</span>
-          </span>
-          <span className="btn-gold">
-            {t.eco.cta} <Icon name="arrow" size={16} />
-          </span>
-        </Link>
-      </div>
+          </Link>
+        </div>
+      )}
 
       {t.cats.map((c) => {
         const items = byType[c.type as PropertyType] ?? [];

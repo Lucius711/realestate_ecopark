@@ -7,6 +7,7 @@ import QuickSearch from "./QuickSearch";
 import Featured from "./Featured";
 import Testimonials from "./Testimonials";
 import {
+  getLatestProject,
   getProperties,
   getSlides,
   getTestimonials,
@@ -18,11 +19,12 @@ import type { Property, PropertyType } from "@/lib/types";
 /** Homepage, section order as in Figma "V2 — Julie style" (and "Homepage EN"). */
 export default async function HomePage({ lang }: { lang: Lang }) {
   const t = dict[lang];
-  const [props, slides, videos, testimonials] = await Promise.all([
+  const [props, slides, videos, testimonials, project] = await Promise.all([
     getProperties(),
     getSlides(),
     getVideos(),
     getTestimonials(),
+    getLatestProject(),
   ]);
   // Pinned listings first ("Ghim lên trang chủ"); sort is stable, so the rest keep newest-first.
   const byType = [...props].sort((a, b) => Number(b.pinned) - Number(a.pinned)).reduce(
@@ -36,7 +38,7 @@ export default async function HomePage({ lang }: { lang: Lang }) {
       <ProjectSlider slides={slides} t={t.slider} />
       <SocialFeed videos={videos} t={t.feed} />
       <QuickSearch t={t.search} />
-      <Featured t={t.featured} byType={byType} />
+      <Featured t={t.featured} byType={byType} project={project} />
       <Testimonials items={testimonials} t={t.testi} />
     </Shell>
   );

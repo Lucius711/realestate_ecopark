@@ -96,8 +96,6 @@ export const dict = {
       ],
       eco: {
         badge: "DỰ ÁN MỚI",
-        title: "ECO RETREAT · LONG AN",
-        sub: "Khu đô thị nghỉ dưỡng 220 ha của Ecopark — biệt thự, liền kề, căn hộ",
         cta: "KHÁM PHÁ DỰ ÁN",
       },
     },
@@ -229,8 +227,6 @@ export const dict = {
       ],
       eco: {
         badge: "NEW PROJECT",
-        title: "ECO RETREAT · LONG AN",
-        sub: "Ecopark's 220 ha resort township — villas, townhouses, apartments",
         cta: "EXPLORE PROJECT",
       },
     },

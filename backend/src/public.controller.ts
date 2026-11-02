@@ -45,6 +45,12 @@ export class PublicController {
     return p;
   }
 
+  /** Newest first: the homepage banner shows the latest project. */
+  @Get("projects")
+  listProjects() {
+    return this.projects.find({ select: ["slug", "name", "location", "summary", "heroImage"], order: { createdAt: "DESC" } });
+  }
+
   @Get("projects/:slug")
   async getProject(@Param("slug") slug: string) {
     const p = await this.projects.findOneBy({ slug });
