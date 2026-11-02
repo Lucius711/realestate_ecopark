@@ -4,9 +4,8 @@ import type { LeadInput, Project, Property, PropertyType, Slide, Testimonial, Vi
 export const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api";
 
 /**
- * Reads from the NestJS API; falls back to the bundled seed so the site still
- * builds and renders when the API is down (or during a static build).
- * shortcut: seed fallback can drift from the DB, remove it once the API is always reachable.
+ * Reads from the NestJS API. When the API is down: sample data from seed.json in local dev,
+ * empty lists in production (a live site must never show made-up listings).
  */
 async function get<T>(path: string, fallback: () => T): Promise<T> {
   try {
@@ -18,13 +17,11 @@ async function get<T>(path: string, fallback: () => T): Promise<T> {
   }
 }
 
-const S = seed as unknown as {
-  properties: Property[];
-  slides: Slide[];
-  videos: Video[];
-  testimonials: Testimonial[];
-  projects: Project[];
-};
+type Seed = { properties: Property[]; slides: Slide[]; videos: Video[]; testimonials: Testimonial[]; projects: Project[] };
+const S: Seed =
+  process.env.NODE_ENV === "production"
+    ? { properties: [], slides: [], videos: [], testimonials: [], projects: [] }
+    : (seed as unknown as Seed);
 
 export const TYPE_SLUG: Record<PropertyType, string> = {
   rent: "for-rent",
