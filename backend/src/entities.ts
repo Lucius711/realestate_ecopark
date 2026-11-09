@@ -206,4 +206,14 @@ export class District {
   @Column("int", { default: 0 }) sortOrder: number;
 }
 
-export const ENTITIES = [Property, Building, District, Project, Slide, Video, Testimonial, Lead, User, Favorite, SavedSearch, SentAlert];
+/** One line of the "Chi phí hàng tháng" box shown on every listing (điện, nước, gửi xe…). Same for all listings, edited in admin. */
+@Entity("living_costs")
+export class LivingCost {
+  @PrimaryGeneratedColumn() id: number;
+  @Column() label: string;
+  /** Free text, e.g. "Khoảng 3.500 – 4.000đ/kWh". */
+  @Column() value: string;
+  @Column("int", { default: 0 }) sortOrder: number;
+}
+
+export const ENTITIES = [Property, Building, District, LivingCost, Project, Slide, Video, Testimonial, Lead, User, Favorite, SavedSearch, SentAlert];

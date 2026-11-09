@@ -1,11 +1,11 @@
 import { BadRequestException, Body, Controller, Delete, Get, MethodNotAllowedException, NotFoundException, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { DataSource, type ObjectLiteral, type Repository } from "typeorm";
 import { check, type Resource } from "./dto";
-import { Building, District, Lead, Project, Property, SavedSearch, Slide, Testimonial, Video } from "./entities";
+import { Building, District, Lead, LivingCost, Project, Property, SavedSearch, Slide, Testimonial, Video } from "./entities";
 import { JwtGuard, Roles } from "./auth";
 import { notifyMatches } from "./notify";
 
-const RESOURCES = { properties: Property, buildings: Building, districts: District, projects: Project, slides: Slide, videos: Video, testimonials: Testimonial, leads: Lead } as const;
+const RESOURCES = { properties: Property, buildings: Building, districts: District, costs: LivingCost, projects: Project, slides: Slide, videos: Video, testimonials: Testimonial, leads: Lead } as const;
 type Name = Resource;
 /**
  * Minimal content API for an admin UI (or curl/Postman): e.g. reorder/replace homepage slides.
@@ -34,7 +34,7 @@ export class AdminController {
 
   @Get(":resource")
   list(@Param("resource") r: string) {
-    return this.repo(r).find({ order: (r === "districts" ? { sortOrder: "ASC", id: "ASC" } : { [this.key(r)]: r === "leads" ? "DESC" : "ASC" }) as never });
+    return this.repo(r).find({ order: (r === "districts" || r === "costs" ? { sortOrder: "ASC", id: "ASC" } : { [this.key(r)]: r === "leads" ? "DESC" : "ASC" }) as never });
   }
 
   @Post(":resource")

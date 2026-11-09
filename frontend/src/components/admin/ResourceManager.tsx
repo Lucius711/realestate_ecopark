@@ -261,8 +261,18 @@ export default function ResourceManager({ resource }: { resource: string }) {
           title={editing.row ? `Sửa ${cfg.singular}: ${String(editing.row[cfg.key])}` : editing.from ? `Thêm ${cfg.singular} (nhân bản từ “${editing.from}”)` : `Thêm ${cfg.singular}`}
           fields={cfg.fields.filter((f) => !(editing.row && f.name === cfg.key))}
           values={editing.values}
-          lookups={lookups}
-          set={(name, v) => setEditing((s) => s && { ...s, values: { ...s.values, [name]: v, ...cfg.autofill?.(name, v, lookups) } })}
+          set={(name, v) =>
+            setEditing((s) => {
+              if (!s) return s;
+              const values = { ...s.values, [name]: v, ...cfg.autofill?.(name, v, lookups) };
+              // Template fields (the description) rewrite themselves as the form is filled in, until the admin edits them by hand.
+              for (const f of cfg.fields) {
+                const cur = s.values[f.name];
+                if (f.template && f.name !== name && (!cur || cur === f.template(s.values, lookups))) values[f.name] = f.template(values, lookups);
+              }
+              return { ...s, values };
+            })
+          }
           onSubmit={save}
           onClose={close}
           saving={saving}

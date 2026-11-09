@@ -46,6 +46,10 @@ export const getProperty = (code: string) =>
 export const getDistricts = () =>
   get<{ name: string }[]>("/districts", () => ["Rừng Cọ", "Quận Đảo", "Giáo dục", "Sân Golf", "Sáng tạo", "Aquabay"].map((name) => ({ name }))).then((l) => l.map((d) => d.name));
 
+import { LIVING_COSTS } from "./living-costs";
+/** "Chi phí hàng tháng" lines as edited in admin; the built-in list when the API is down. */
+export const getLivingCosts = () => get<{ label: string; value: string }[]>("/costs", () => LIVING_COSTS);
+
 export const getSlides = () => get<Slide[]>("/slides", () => S.slides.filter((s) => s.active));
 export const getVideos = () => get<Video[]>("/videos", () => S.videos);
 export const getTestimonials = () => get<Testimonial[]>("/testimonials", () => S.testimonials);

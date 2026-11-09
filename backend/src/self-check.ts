@@ -194,6 +194,13 @@ const post = (path: string, body: unknown, headers: Record<string, string> = {})
   assert.equal((await send("PUT", "/admin/properties/TEST-0001", { videoUrl: "https://evil.example/v" })).status, 400, "video link must be TikTok/YouTube");
   assert.equal((await send("PUT", "/admin/properties/TEST-0001", { videoUrl: "https://www.youtube.com/watch?v=abcdefghijk", verifiedAt: new Date().toISOString(), pinned: true })).status, 200);
   assert.equal((await send("PUT", "/admin/properties/TEST-0001", { verifiedAt: null, videoUrl: null })).status, 200, "clearing optional fields");
+  // chi phí sinh hoạt: edited in admin, read by the public page
+  const cost = (await (await send("POST", "/admin/costs", { label: "TEST-CP", value: "1.000đ", sortOrder: 999 })).json()) as { id: number };
+  assert.equal((await send("POST", "/admin/costs", { label: "  ", value: "x" })).status, 400, "cost label required");
+  assert.deepEqual(((await (await get("/costs")).json()) as { label: string; value: string }[]).at(-1), { label: "TEST-CP", value: "1.000đ" }, "public list, by sortOrder");
+  assert.equal((await send("PUT", `/admin/costs/${cost.id}`, { value: "2.000đ" })).status, 200);
+  assert.equal(((await (await get("/costs")).json()) as { value: string }[]).at(-1)?.value, "2.000đ", "edit reaches the public page");
+  assert.equal((await send("DELETE", `/admin/costs/${cost.id}`, {})).status, 200, "delete");
   // phân khu: a managed list; renaming cascades, deleting a used one is refused
   const dsList = async () => (await (await get("/districts")).json()) as { id: number; name: string }[];
   assert((await dsList()).map((d) => d.name).includes("Quận Đảo"), "default phân khu are seeded");

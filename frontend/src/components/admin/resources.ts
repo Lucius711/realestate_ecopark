@@ -95,11 +95,29 @@ const TYPE_VERB: Record<string, string> = { rent: "Cho thuê", resale: "Chuyển
 
 /** One description template for every listing: the form's own values slotted in, left for the admin to polish. */
 export function describe(v: Values, lookups: Lookups) {
+  if (!v.district) return "";
   const b = buildingOf(lookups, v.buildingId);
   const what = v.bedrooms ? `căn ${v.bedrooms} phòng ngủ` : "căn hộ";
   const head = `${TYPE_VERB[String(v.type)] ?? "Giới thiệu"} ${what}, ${v.areaM2 || "…"} m²${v.landArea ? " đất" : ""}${b ? ` tại tòa ${b.name}` : ""}, phân khu ${v.district}, Ecopark.`;
   const detail = [v.floorLabel && `Tầng: ${v.floorLabel}`, v.direction && `Hướng ${v.direction}`, v.furniture && `Nội thất: ${v.furniture}`, v.legal && `Pháp lý: ${v.legal}`].filter(Boolean).join(" · ");
   return [head, detail, "Liên hệ anh Tuấn để đặt lịch xem nhà."].filter(Boolean).join("\n");
+}
+
+/** Auto title from the form's own values; empty until there is a place to name. */
+export function autoTitle(v: Values, lookups: Lookups) {
+  const b = buildingOf(lookups, v.buildingId);
+  if (!b && !v.district) return "";
+  const rooms = v.bedrooms !== "" && v.bedrooms != null ? `căn ${v.bedrooms}PN` : "căn hộ";
+  return [TYPE_VERB[String(v.type)], rooms, v.areaM2 ? `${v.areaM2}m²` : "", b ? `tòa ${b.name}` : `phân khu ${v.district}`].filter(Boolean).join(" ");
+}
+
+/** "Giá hiển thị" from the price in millions, so the price is typed once. */
+export function autoPriceLabel(v: Values) {
+  const n = Number(v.priceMillion);
+  if (!v.priceMillion || !(n > 0)) return "";
+  if (v.type === "rent") return `${n} triệu/tháng`;
+  const text = n >= 1000 ? `${String(n / 1000).replace(".", ",")} tỷ` : `${n} triệu`;
+  return v.type === "project" ? `Từ ${text}` : text;
 }
 
 export const RESOURCES: Record<string, ResourceConfig> = {
@@ -127,8 +145,8 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: "floorLabel", label: "Tầng", type: "text", placeholder: "Tầng 12", section: "Thông tin chính" },
       { name: "direction", label: "Hướng", type: "select", options: DIRECTIONS, nullable: true, section: "Thông tin chính" },
       { name: "projectSlug", label: "Thuộc dự án", type: "ref", ref: "projects", nullable: true, section: "Thông tin chính" },
-      { name: "title", label: "Tiêu đề", type: "text", placeholder: "Để trống: tự tạo từ loại, số phòng ngủ, diện tích, tòa", hint: "Chữ khách nhìn thấy ở đầu trang căn.", section: "Thông tin chính" },
-      { name: "priceLabel", label: "Giá hiển thị", type: "text", required: true, placeholder: "12 triệu/tháng · 3,85 tỷ · Từ 4,8 tỷ", hint: "Chữ khách nhìn thấy.", section: "Giá & diện tích" },
+      { name: "title", label: "Tiêu đề", type: "text", template: autoTitle, placeholder: "Tự điền từ loại, phòng ngủ, diện tích, tòa", hint: "Tự điền khi anh nhập thông tin; sửa tay thì giữ nguyên. Chữ khách nhìn thấy ở đầu trang căn.", section: "Thông tin chính" },
+      { name: "priceLabel", label: "Giá hiển thị", type: "text", required: true, template: autoPriceLabel, placeholder: "12 triệu/tháng · 3,85 tỷ · Từ 4,8 tỷ", hint: "Tự điền từ giá (triệu đồng) bên dưới; sửa tay thì giữ nguyên. Chữ khách nhìn thấy.", section: "Giá & diện tích" },
       { name: "priceMillion", label: "Giá (triệu đồng)", type: "number", required: true, placeholder: "12", hint: "Chỉ ghi số, dùng để lọc và sắp xếp. Cho thuê: giá mỗi tháng. 3,85 tỷ = 3850.", section: "Giá & diện tích" },
       { name: "areaM2", label: "Diện tích (m²)", type: "number", required: true, placeholder: "75", section: "Giá & diện tích" },
       { name: "landArea", label: "Đây là diện tích đất (nhà phố, biệt thự)", type: "checkbox", section: "Giá & diện tích" },
@@ -138,7 +156,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: "videoUrl", label: "Link video review", type: "text", nullable: true, placeholder: "https://www.tiktok.com/@.../video/...", hint: "TikTok hoặc YouTube. Có link → thẻ căn hiện ▶ Video và khách xem ngay trên trang.", section: "Ảnh & video" },
       { name: "furniture", label: "Nội thất", type: "text", nullable: true, placeholder: "Full nội thất", section: "Chi tiết" },
       { name: "legal", label: "Pháp lý", type: "text", nullable: true, placeholder: "Sổ hồng lâu dài", section: "Chi tiết" },
-      { name: "description", label: "Mô tả", type: "textarea", template: describe, hint: "Bấm nút bên dưới để tự viết mô tả từ các thông tin đã nhập, rồi sửa lại nếu cần.", section: "Chi tiết" },
+      { name: "description", label: "Mô tả", type: "textarea", template: describe, hint: "Tự điền từ thông tin ở trên; sửa tay thì giữ nguyên.", section: "Chi tiết" },
       { name: "verifiedAt", label: "Anh Tuấn đã xem nhà thực tế", type: "stamp", hint: "Website hiện nhãn “✓ Đã xem thực tế” kèm ngày tích.", section: "Uy tín & nổi bật" },
       { name: "pinned", label: "Ghim lên trang chủ", type: "checkbox", hint: "Luôn hiện đầu mục “Nổi bật” ở trang chủ.", section: "Uy tín & nổi bật" },
     ],
@@ -151,8 +169,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     // A copy starts as a draft, without the "đã xem thực tế" / pinned marks of the original, and gets its own code when saved.
     copy: (r) => ({ ...r, code: undefined, status: "draft", pinned: false, verifiedAt: null }),
     beforeSave: (p, isNew, lk) => {
-      const b = buildingOf(lk, p.buildingId);
-      const title = String(p.title ?? "").trim() || [TYPE_VERB[String(p.type)], p.bedrooms != null ? `căn ${p.bedrooms}PN` : "căn hộ", p.areaM2 ? `${p.areaM2}m²` : "", b ? `tòa ${b.name}` : `phân khu ${p.district}`].filter(Boolean).join(" ");
+      const title = String(p.title ?? "").trim() || autoTitle(p as unknown as Values, lk);
       return { ...p, title, ...(isNew ? { code: newCode(String(p.type)) } : {}) };
     },
   },
@@ -183,6 +200,22 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     fields: [
       { name: "name", label: "Tên phân khu", type: "text", required: true, placeholder: "Sân Golf", hint: "Đổi tên thì mọi căn và tòa thuộc phân khu này tự đổi theo. Muốn xoá thì phải chuyển hết căn/tòa sang phân khu khác trước.", section: "Phân khu" },
       { name: "sortOrder", label: "Thứ tự (nhỏ hiện trước)", type: "number", hint: "Thứ tự trong các ô chọn và bộ lọc trên website.", section: "Phân khu" },
+    ],
+    defaults: { sortOrder: 0 },
+  },
+  costs: {
+    title: "Chi phí sinh hoạt",
+    singular: "khoản chi phí",
+    key: "id",
+    columns: [
+      { key: "sortOrder", label: "Thứ tự" },
+      { key: "label", label: "Khoản" },
+      { key: "value", label: "Hiển thị cho khách" },
+    ],
+    fields: [
+      { name: "label", label: "Khoản", type: "text", required: true, placeholder: "Gửi xe máy", hint: "Hiện ở mục “Chi phí hàng tháng” của mọi căn.", section: "Chi phí" },
+      { name: "value", label: "Hiển thị cho khách", type: "text", required: true, placeholder: "Khoảng 120.000đ/tháng", hint: "Ghi cả đơn vị. Sửa một chỗ là đổi cho mọi căn.", section: "Chi phí" },
+      { name: "sortOrder", label: "Thứ tự (nhỏ hiện trước)", type: "number", section: "Chi phí" },
     ],
     defaults: { sortOrder: 0 },
   },

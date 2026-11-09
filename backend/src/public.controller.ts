@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { IsEmail, IsOptional, IsString, Length, Matches, ValidateIf } from "class-validator";
 import { In, Repository } from "typeorm";
-import { Building, District, LISTED, Lead, PUBLIC, Project, Property, Slide, Testimonial, Video } from "./entities";
+import { Building, District, LISTED, Lead, LivingCost, PUBLIC, Project, Property, Slide, Testimonial, Video } from "./entities";
 import type { JwtUser } from "./auth";
 import { SlidingWindow } from "./rate-limit";
 
@@ -26,6 +26,7 @@ export class PublicController {
     @InjectRepository(Property) private props: Repository<Property>,
     @InjectRepository(Building) private buildings: Repository<Building>,
     @InjectRepository(District) private districts: Repository<District>,
+    @InjectRepository(LivingCost) private costs: Repository<LivingCost>,
     @InjectRepository(Project) private projects: Repository<Project>,
     @InjectRepository(Slide) private slides: Repository<Slide>,
     @InjectRepository(Video) private videos: Repository<Video>,
@@ -56,6 +57,11 @@ export class PublicController {
   @Get("districts")
   listDistricts() {
     return this.districts.find({ order: { sortOrder: "ASC", id: "ASC" } });
+  }
+
+  @Get("costs")
+  listCosts() {
+    return this.costs.find({ select: ["label", "value"], order: { sortOrder: "ASC", id: "ASC" } });
   }
 
   /** Newest first: the homepage banner shows the latest project. */

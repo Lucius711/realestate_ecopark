@@ -9,15 +9,14 @@ const INTERVAL = 6000; // ms each photo stays
 const FADE = 1400; // ms of the cross-fade
 
 /**
- * Hero photos in the style of apple.com: full-bleed, a slow cross-fade with a barely-there zoom, and a small
+ * Hero photos in the style of apple.com: full-bleed, a slow cross-fade (no zoom: scaling a big photo makes it shimmer), and a small
  * pill-shaped progress indicator with a pause button (people must be able to stop moving content).
  */
 export default function HeroSlides({ slides }: { slides: HeroSlide[] }) {
-  const [{ i, prev }, setPos] = useState({ i: 0, prev: -1 });
+  const [i, go] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [reduced, setReduced] = useState(false);
   const auto = playing && !reduced && slides.length > 1;
-  const go = (n: number) => setPos((s) => ({ i: n, prev: s.i }));
 
   useEffect(() => {
     const m = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -49,8 +48,6 @@ export default function HeroSlides({ slides }: { slides: HeroSlide[] }) {
             objectPosition: s.position,
             opacity: n === i ? 1 : 0,
             transitionDuration: `${FADE}ms`,
-            // The zoom keeps running on the photo that is fading out, so it never jumps back mid-fade.
-            animation: n === i || n === prev ? `heroZoom ${INTERVAL + FADE}ms ease-out forwards` : undefined,
           }}
         />
       ))}
@@ -59,7 +56,7 @@ export default function HeroSlides({ slides }: { slides: HeroSlide[] }) {
           <div className="flex items-center gap-2 rounded-full bg-black/35 px-3.5 py-3">
             {slides.map((s, n) => (
               <button key={s.src} type="button" onClick={() => go(n)} aria-label={`Ảnh ${n + 1} / ${slides.length}`} aria-current={n === i} className={`relative h-1.5 overflow-hidden rounded-full bg-white/45 transition-[width] duration-500 ${n === i ? "w-10" : "w-1.5"}`}>
-                {n === i && <span key={`${i}-${auto}`} className="absolute inset-y-0 left-0 bg-white" style={auto ? { animation: `heroFill ${INTERVAL}ms linear forwards` } : { width: "100%" }} />}
+                {n === i && <span key={`${i}-${auto}`} className="absolute inset-0 origin-left bg-white" style={auto ? { animation: `heroFill ${INTERVAL}ms linear forwards` } : undefined} />}
               </button>
             ))}
           </div>

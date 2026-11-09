@@ -10,13 +10,13 @@ import { Icon, type IconName } from "@/components/Icons";
 import Empty from "@/components/Empty";
 import FavoriteButton from "@/components/FavoriteButton";
 import {
+  getLivingCosts,
   getProperties,
   getProperty,
   seedProperties,
   TYPE_SLUG,
 } from "@/lib/api";
 import { areaLabel, feePerM2, pricePerM2, TYPE_LABEL } from "@/lib/format";
-import { LIVING_COSTS } from "@/lib/living-costs";
 import { videoFromUrl, verifiedLabel } from "@/lib/video";
 
 export const revalidate = 60;
@@ -68,6 +68,7 @@ export default async function DetailPage({
     .sort((a, b) => Number(b.district === p.district) - Number(a.district === p.district))
     .slice(0, 3);
   const typeSlug = TYPE_SLUG[p.type];
+  const livingCosts = await getLivingCosts();
 
   const facts: [IconName, string, string | null | undefined][] = [
     ["area", "Diện tích", areaLabel(p)],
@@ -83,7 +84,7 @@ export default async function DetailPage({
   const fee = p.building?.managementFee;
   const costs: [string, string][] = [
     ["Phí quản lý", fee ? `${feePerM2(fee)} (≈ ${Math.round(fee * p.areaM2).toLocaleString("vi-VN")}đ/tháng)` : "Theo BQL"],
-    ...LIVING_COSTS.map((c): [string, string] => [c.label, c.value || "Liên hệ"]),
+    ...livingCosts.map((c): [string, string] => [c.label, c.value || "Liên hệ"]),
   ];
 
   const card =
@@ -208,6 +209,7 @@ export default async function DetailPage({
                 </div>
               ))}
             </dl>
+            <p className="text-[12px] text-muted">Chi phí tham khảo, thực tế theo BQL và nhà cung cấp tại thời điểm thuê/mua.</p>
           </section>
 
           <section className={card}>

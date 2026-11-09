@@ -60,7 +60,7 @@ function Toggle({ f, checked, set, note }: { f: Field; checked: boolean; set: (v
   );
 }
 
-export function FieldInput({ f, value, set, fill }: { f: Field; value: string | boolean; set: (v: string | boolean) => void; fill?: () => void }) {
+export function FieldInput({ f, value, set }: { f: Field; value: string | boolean; set: (v: string | boolean) => void }) {
   const id = `f-${f.name}`;
   if (f.type === "checkbox") return <Toggle f={f} checked={Boolean(value)} set={set} />;
   if (f.type === "stamp") {
@@ -93,11 +93,6 @@ export function FieldInput({ f, value, set, fill }: { f: Field; value: string | 
         {f.label} {f.required ? <span className="text-price" aria-label="bắt buộc">*</span> : <span className="font-normal text-soft">(không bắt buộc)</span>}
       </label>
       {control}
-      {fill && (
-        <button type="button" onClick={fill} className="w-fit rounded border border-esp px-3 py-2 text-[12px] font-semibold text-esp hover:bg-cream">
-          ✨ Tự viết mô tả từ thông tin ở trên
-        </button>
-      )}
       {f.hint && <span className="text-[12px] text-muted">{f.hint}</span>}
     </div>
   );

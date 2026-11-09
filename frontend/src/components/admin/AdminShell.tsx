@@ -16,6 +16,7 @@ const NAV: { group: string; items: { href: string; label: string; icon: IconName
       { href: "/admin/properties", label: "Bất động sản", icon: "tag" },
       { href: "/admin/districts", label: "Phân khu", icon: "pin" },
       { href: "/admin/buildings", label: "Tòa nhà & phí QL", icon: "floor" },
+      { href: "/admin/costs", label: "Chi phí sinh hoạt", icon: "doc" },
       { href: "/admin/projects", label: "Dự án", icon: "map" },
     ],
   },

@@ -81,6 +81,12 @@ export class DistrictDto {
   @IsOptional() @IsInt() @Min(0) @Max(999) sortOrder?: number;
 }
 
+export class LivingCostDto {
+  @IsString() @Matches(/\S/, { message: "label không được để trống" }) @Length(1, 40) label: string;
+  @IsString() @Matches(/\S/, { message: "value không được để trống" }) @Length(1, 80) value: string;
+  @IsOptional() @IsInt() @Min(0) @Max(999) sortOrder?: number;
+}
+
 export class BuildingDto {
   @IsString() @Length(1, 60) name: string;
   @IsString() @Length(1, 50) district: string;
@@ -162,7 +168,7 @@ export class LeadStatusDto {
 }
 
 // Leads are created by customers via POST /leads; admins may only change their status.
-export const DTO = { properties: PropertyDto, buildings: BuildingDto, districts: DistrictDto, projects: ProjectDto, slides: SlideDto, videos: VideoDto, testimonials: TestimonialDto, leads: LeadStatusDto } as const;
+export const DTO = { properties: PropertyDto, buildings: BuildingDto, districts: DistrictDto, costs: LivingCostDto, projects: ProjectDto, slides: SlideDto, videos: VideoDto, testimonials: TestimonialDto, leads: LeadStatusDto } as const;
 export type Resource = keyof typeof DTO;
 
 // Nested errors (e.g. policies[0].title) come back as "policies.0.title: …".

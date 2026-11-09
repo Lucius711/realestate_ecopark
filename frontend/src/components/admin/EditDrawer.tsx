@@ -4,7 +4,7 @@ import { useEffect, useRef, type FormEvent } from "react";
 import { Icon } from "../Icons";
 import { FieldInput, StatusPill } from "./fields";
 import type { Values } from "./form";
-import type { Field, Lookups } from "./resources";
+import type { Field } from "./resources";
 
 /** Status shown as a coloured pill that is also a select: change "Đang bán → Đã cọc" without opening the form. */
 export function StatusSelect({ field, value, label, onChange }: { field: Field; value: string; label: string; onChange: (v: string) => void }) {
@@ -27,7 +27,6 @@ export function EditDrawer({
   title,
   fields,
   values,
-  lookups,
   set,
   onSubmit,
   onClose,
@@ -38,7 +37,6 @@ export function EditDrawer({
   title: string;
   fields: Field[];
   values: Values;
-  lookups: Lookups;
   set: (name: string, v: string | boolean) => void;
   onSubmit: (e: FormEvent) => void;
   onClose: () => void;
@@ -85,7 +83,6 @@ export function EditDrawer({
                       f={f}
                       value={values[f.name] ?? ""}
                       set={(v) => set(f.name, v)}
-                      fill={f.template && (() => (!values[f.name] || window.confirm("Thay mô tả hiện tại bằng mô tả tự tạo?")) && set(f.name, f.template!(values, lookups)))}
                     />
                   </div>
                 ))}

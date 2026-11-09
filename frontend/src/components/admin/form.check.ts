@@ -1,4 +1,5 @@
 // Run: npx tsx src/components/admin/form.check.ts — self-check for card lists, slugs and Vietnamese errors.
+import { autoPriceLabel, autoTitle } from "./resources";
 import assert from "node:assert";
 import { toPayload, toValues, viMessage } from "./form";
 import { RESOURCES, slugify } from "./resources";
@@ -43,3 +44,11 @@ assert.equal(toPayload(pr.fields.filter((f) => f.name === "buildingId"), { build
 assert.throws(() => toPayload(RESOURCES.buildings.fields, { name: "A", district: "", managementFee: "" }), /Phân khu: bắt buộc/, "a building needs a phân khu");
 assert.equal(toPayload(RESOURCES.districts.fields, { name: " Sân Golf ", sortOrder: "30" }).sortOrder, 30);
 console.log("form.check ok");
+
+// Typed once: the visible price and the title follow the form.
+assert.equal(autoPriceLabel({ type: "rent", priceMillion: "7" }), "7 triệu/tháng");
+assert.equal(autoPriceLabel({ type: "resale", priceMillion: "3850" }), "3,85 tỷ");
+assert.equal(autoPriceLabel({ type: "project", priceMillion: "4800" }), "Từ 4,8 tỷ");
+assert.equal(autoPriceLabel({ type: "rent", priceMillion: "" }), "");
+assert.equal(autoTitle({ type: "rent" }, {}), "", "no place yet, no title");
+assert.equal(autoTitle({ type: "rent", bedrooms: "2", areaM2: "55", district: "Aquabay" }, {}), "Cho thuê căn 2PN 55m² phân khu Aquabay");

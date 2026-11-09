@@ -3,7 +3,7 @@ import { Module, RequestMethod, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
-import { District, ENTITIES } from "./entities";
+import { District, ENTITIES, LivingCost } from "./entities";
 import { PublicController } from "./public.controller";
 import { AdminController } from "./admin.controller";
 import { JwtModule } from "@nestjs/jwt";
@@ -90,12 +90,28 @@ export async function seedDistricts(db: DataSource) {
   if (want.length) await repo.save(want.map((name) => repo.create({ name, sortOrder: (DEFAULT_DISTRICTS.indexOf(name) + 1 || DEFAULT_DISTRICTS.length + 1) * 10 })));
 }
 
+/** Market-typical figures, not official Ecopark prices: the admin corrects them in "Chi phí sinh hoạt". Only when the table is empty. */
+const DEFAULT_COSTS: [string, string][] = [
+  ["Điện", "Khoảng 3.500 – 4.000đ/kWh"],
+  ["Nước", "Khoảng 20.000 – 25.000đ/m³"],
+  ["Gửi xe máy", "Khoảng 100.000 – 150.000đ/tháng"],
+  ["Gửi ô tô", "Khoảng 1.200.000 – 1.500.000đ/tháng"],
+  ["Internet", "Khoảng 180.000 – 250.000đ/tháng"],
+];
+
+export async function seedCosts(db: DataSource) {
+  const repo = db.getRepository(LivingCost);
+  if (await repo.count()) return;
+  await repo.save(DEFAULT_COSTS.map(([label, value], i) => repo.create({ label, value, sortOrder: (i + 1) * 10 })));
+}
+
 async function bootstrap() {
   if (JWT_SECRET.length < 32) throw new Error("JWT_SECRET must be set and at least 32 characters (see .env.example)");
   await migrateLegacyData();
   if (process.env.NODE_ENV === "production" && !process.env.R2_PUBLIC_URL) console.warn("[uploads] R2 is not configured: uploads go to the container's ./uploads (docker volume). Set R2_* in .env.prod for a CDN.");
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   await seedDistricts(app.get(DataSource));
+  await seedCosts(app.get(DataSource));
   app.disable("x-powered-by");
   const https = (process.env.API_PUBLIC_URL ?? "").startsWith("https");
   app.use((_req: unknown, res: { setHeader(k: string, v: string): void }, next: () => void) => {
