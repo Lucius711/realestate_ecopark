@@ -13,7 +13,6 @@ type LeadRow = { id: number; source: string; propertyCode: string | null; messag
 export type Alert = { id: number; type: "rent" | "resale" | "project"; district: string | null; minPrice: number | null; maxPrice: number | null; minBeds: number | null; keyword: string | null };
 
 const TYPE = { rent: "Nhà cho thuê", resale: "Nhà chuyển nhượng", project: "Hàng dự án" } as const;
-const DISTRICTS = ["Rừng Cọ", "Quận Đảo", "Giáo dục", "Sân Golf", "Sáng tạo", "Aquabay"];
 const STATUS = {
   new: { label: "Đã nhận", cls: "bg-cream text-esp" },
   contacted: { label: "Đã liên hệ", cls: "bg-[#E7F0FB] text-[#1F5FAD]" },
@@ -190,7 +189,7 @@ function Requests() {
   );
 }
 
-function Alerts({ me }: { me: Me }) {
+function Alerts({ me, districts }: { me: Me; districts: string[] }) {
   const [rows, setRows] = useState<Alert[] | null>(null);
   const [err, setErr] = useState("");
   const load = useCallback(() => apiFetch<Alert[]>("/me/searches").then(setRows).catch(() => setRows([])), []);
@@ -253,7 +252,7 @@ function Alerts({ me }: { me: Me }) {
         </select>
         <select name="district" aria-label="Phân khu" className={`${input} md:col-span-2`}>
           <option value="">Mọi phân khu</option>
-          {DISTRICTS.map((d) => (
+          {districts.map((d) => (
             <option key={d}>{d}</option>
           ))}
         </select>
@@ -275,7 +274,7 @@ function Alerts({ me }: { me: Me }) {
 }
 
 /** /account — member area: profile (pre-fills forms), ♡ saved listings, request history, new-listing alerts. */
-export default function AccountPage() {
+export default function AccountPage({ districts }: { districts: string[] }) {
   const me = useMe();
   const router = useRouter();
   useEffect(() => {
@@ -328,7 +327,7 @@ export default function AccountPage() {
       <Profile me={me} />
       <Saved />
       <Requests />
-      <Alerts me={me} />
+      <Alerts me={me} districts={districts} />
     </div>
   );
 }

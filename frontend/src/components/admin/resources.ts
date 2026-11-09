@@ -1,4 +1,5 @@
 import { videoFromUrl } from "@/lib/video";
+import type { Values } from "./form";
 
 // What each admin table shows and edits. Field rules mirror backend/src/dto.ts (the API re-validates everything).
 
@@ -10,6 +11,8 @@ import { videoFromUrl } from "@/lib/video";
 export type FieldType = "text" | "textarea" | "number" | "select" | "radio" | "checkbox" | "stamp" | "image" | "list" | "repeat" | "ref" | "link";
 export type ItemField = { name: string; label: string; type: "text" | "textarea" | "image"; placeholder?: string };
 export type Tone = "green" | "amber" | "dark" | "gray";
+/** Rows of other admin tables the form needs (e.g. buildings), by resource name. */
+export type Lookups = Record<string, Record<string, unknown>[]>;
 export type Option = { value: string; label: string; hint?: string; tone?: Tone };
 export type Field = {
   name: string;
@@ -31,11 +34,15 @@ export type Field = {
   item?: ItemField[];
   itemLabel?: string;
   max?: number;
-  /** ref: admin resource whose rows are the options (value = its key, label = its name). */
+  /** ref: admin resource whose rows are the options (value = row[refKey], label = row[refLabel]; defaults slug / name). */
   ref?: string;
+  refKey?: string;
+  refLabel?: string;
+  /** textarea: a button that writes the text for the admin from the rest of the form (they can still edit it). */
+  template?: (v: Values, lookups: Lookups) => string;
 };
 /** thumb: first image as a small picture · status: coloured pill you can change right in the table. */
-export type Column = { key: string; label: string; kind?: "thumb" | "status"; format?: (v: unknown, row: Record<string, unknown>) => string };
+export type Column = { key: string; label: string; kind?: "thumb" | "status"; format?: (v: unknown, row: Record<string, unknown>, lookups: Lookups) => string };
 export type ResourceConfig = {
   title: string;
   singular: string;
@@ -48,7 +55,13 @@ export type ResourceConfig = {
   fields: Field[];
   defaults: Record<string, unknown>;
   /** Last touch on the payload before it is sent, e.g. values worked out from other fields. */
-  beforeSave?: (p: Record<string, unknown>, isNew: boolean) => Record<string, unknown>;
+  beforeSave?: (p: Record<string, unknown>, isNew: boolean, lookups: Lookups) => Record<string, unknown>;
+  /** Admin tables whose rows the form needs (loaded once when the page opens). */
+  lookups?: string[];
+  /** When `name` changes, other form values to set along with it (e.g. a building → its phân khu). */
+  autofill?: (name: string, value: string | boolean, lookups: Lookups) => Record<string, string>;
+  /** "Nhân bản": the values a new row starts with when copied from this one. */
+  copy?: (row: Record<string, unknown>) => Record<string, unknown>;
 };
 
 /** "Ecopark Grand – The Island" → "ecopark-grand-the-island" */
@@ -67,7 +80,27 @@ const TYPES = [
   { value: "resale", label: "Chuyển nhượng" },
   { value: "project", label: "Hàng dự án" },
 ];
-const DISTRICTS = ["Rừng Cọ", "Quận Đảo", "Giáo dục", "Sân Golf", "Sáng tạo", "Aquabay"].map((d) => ({ value: d, label: d }));
+const DIRECTIONS = ["", "Đông", "Tây", "Nam", "Bắc", "Đông Nam", "Đông Bắc", "Tây Nam", "Tây Bắc"].map((d) => ({ value: d, label: d || "— Chưa rõ —" }));
+
+// Customers never see the internal code (brokers don't publish it), so the admin doesn't type one: it is generated.
+const CODE_PREFIX: Record<string, string> = { rent: "T", resale: "CN", project: "DA" };
+const CODE_CHARS = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"; // no 0/O/1/I
+export function newCode(type: string) {
+  const r = crypto.getRandomValues(new Uint8Array(6));
+  return `${CODE_PREFIX[type] ?? "BDS"}-${Array.from(r, (b) => CODE_CHARS[b % 32]).join("")}`;
+}
+
+const buildingOf = (lookups: Lookups, id: unknown) => lookups.buildings?.find((b) => String(b.id) === String(id));
+const TYPE_VERB: Record<string, string> = { rent: "Cho thuê", resale: "Chuyển nhượng", project: "Giới thiệu" };
+
+/** One description template for every listing: the form's own values slotted in, left for the admin to polish. */
+export function describe(v: Values, lookups: Lookups) {
+  const b = buildingOf(lookups, v.buildingId);
+  const what = v.bedrooms ? `căn ${v.bedrooms} phòng ngủ` : "căn hộ";
+  const head = `${TYPE_VERB[String(v.type)] ?? "Giới thiệu"} ${what}, ${v.areaM2 || "…"} m²${v.landArea ? " đất" : ""}${b ? ` tại tòa ${b.name}` : ""}, phân khu ${v.district}, Ecopark.`;
+  const detail = [v.floorLabel && `Tầng: ${v.floorLabel}`, v.direction && `Hướng ${v.direction}`, v.furniture && `Nội thất: ${v.furniture}`, v.legal && `Pháp lý: ${v.legal}`].filter(Boolean).join(" · ");
+  return [head, detail, "Liên hệ anh Tuấn để đặt lịch xem nhà."].filter(Boolean).join("\n");
+}
 
 export const RESOURCES: Record<string, ResourceConfig> = {
   properties: {
@@ -77,8 +110,10 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     view: (r) => (r.status !== "draft" ? `/property/${r.code}` : null),
     columns: [
       { key: "images", label: "", kind: "thumb" },
-      { key: "code", label: "Mã" },
       { key: "title", label: "Tiêu đề" },
+      { key: "buildingId", label: "Tòa", format: (v, _r, lk) => String(buildingOf(lk, v)?.name ?? "—") },
+      { key: "floorLabel", label: "Tầng" },
+      { key: "code", label: "Mã nội bộ" },
       { key: "type", label: "Loại", format: (v) => TYPES.find((t) => t.value === v)?.label ?? String(v) },
       { key: "priceLabel", label: "Giá" },
       { key: "status", label: "Tình trạng", kind: "status" },
@@ -86,11 +121,13 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     filter: { key: "status", options: PROPERTY_STATUS },
     fields: [
       { name: "status", label: "Tình trạng", type: "radio", options: PROPERTY_STATUS, section: "Tình trạng" },
-      { name: "code", label: "Mã căn", type: "text", required: true, placeholder: "ECO-1801", hint: "Chữ in hoa, số và dấu gạch ngang. Không đổi được sau khi tạo.", section: "Thông tin chính" },
       { name: "type", label: "Loại", type: "select", options: TYPES, required: true, section: "Thông tin chính" },
-      { name: "title", label: "Tiêu đề", type: "text", required: true, placeholder: "Căn 2PN Aqua Bay ban công rộng", section: "Thông tin chính" },
-      { name: "district", label: "Phân khu", type: "select", options: DISTRICTS, required: true, section: "Thông tin chính" },
+      { name: "buildingId", label: "Tòa", type: "ref", ref: "buildings", refKey: "id", refLabel: "name", numeric: true, nullable: true, placeholder: "— Chưa chọn tòa —", hint: "Chọn tòa thì phân khu tự điền và khách thấy phí quản lý của tòa. Chưa có tòa? Thêm ở mục “Tòa nhà”.", section: "Thông tin chính" },
+      { name: "district", label: "Phân khu", type: "ref", ref: "districts", refKey: "name", placeholder: "— Chọn phân khu —", required: true, hint: "Thêm hoặc đổi tên phân khu ở mục “Phân khu”.", section: "Thông tin chính" },
+      { name: "floorLabel", label: "Tầng", type: "text", placeholder: "Tầng 12", section: "Thông tin chính" },
+      { name: "direction", label: "Hướng", type: "select", options: DIRECTIONS, nullable: true, section: "Thông tin chính" },
       { name: "projectSlug", label: "Thuộc dự án", type: "ref", ref: "projects", nullable: true, section: "Thông tin chính" },
+      { name: "title", label: "Tiêu đề", type: "text", placeholder: "Để trống: tự tạo từ loại, số phòng ngủ, diện tích, tòa", hint: "Chữ khách nhìn thấy ở đầu trang căn.", section: "Thông tin chính" },
       { name: "priceLabel", label: "Giá hiển thị", type: "text", required: true, placeholder: "12 triệu/tháng · 3,85 tỷ · Từ 4,8 tỷ", hint: "Chữ khách nhìn thấy.", section: "Giá & diện tích" },
       { name: "priceMillion", label: "Giá (triệu đồng)", type: "number", required: true, placeholder: "12", hint: "Chỉ ghi số, dùng để lọc và sắp xếp. Cho thuê: giá mỗi tháng. 3,85 tỷ = 3850.", section: "Giá & diện tích" },
       { name: "areaM2", label: "Diện tích (m²)", type: "number", required: true, placeholder: "75", section: "Giá & diện tích" },
@@ -99,15 +136,55 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: "bathrooms", label: "Phòng tắm", type: "number", nullable: true, placeholder: "2", section: "Giá & diện tích" },
       { name: "images", label: "Ảnh", type: "list", required: true, hint: "Ảnh đầu tiên là ảnh bìa. Bấm ← để đưa ảnh lên trước.", section: "Ảnh & video" },
       { name: "videoUrl", label: "Link video review", type: "text", nullable: true, placeholder: "https://www.tiktok.com/@.../video/...", hint: "TikTok hoặc YouTube. Có link → thẻ căn hiện ▶ Video và khách xem ngay trên trang.", section: "Ảnh & video" },
-      { name: "floorLabel", label: "Tầng", type: "text", placeholder: "Tầng 12 · 3 tầng · Bàn giao 2027", section: "Chi tiết" },
-      { name: "direction", label: "Hướng ban công", type: "text", nullable: true, placeholder: "Đông Nam", section: "Chi tiết" },
       { name: "furniture", label: "Nội thất", type: "text", nullable: true, placeholder: "Full nội thất", section: "Chi tiết" },
       { name: "legal", label: "Pháp lý", type: "text", nullable: true, placeholder: "Sổ hồng lâu dài", section: "Chi tiết" },
-      { name: "description", label: "Mô tả", type: "textarea", section: "Chi tiết" },
+      { name: "description", label: "Mô tả", type: "textarea", template: describe, hint: "Bấm nút bên dưới để tự viết mô tả từ các thông tin đã nhập, rồi sửa lại nếu cần.", section: "Chi tiết" },
       { name: "verifiedAt", label: "Anh Tuấn đã xem nhà thực tế", type: "stamp", hint: "Website hiện nhãn “✓ Đã xem thực tế” kèm ngày tích.", section: "Uy tín & nổi bật" },
       { name: "pinned", label: "Ghim lên trang chủ", type: "checkbox", hint: "Luôn hiện đầu mục “Nổi bật” ở trang chủ.", section: "Uy tín & nổi bật" },
     ],
-    defaults: { status: "available", type: "rent", district: "Rừng Cọ", landArea: false, pinned: false, verifiedAt: null, images: [] },
+    defaults: { status: "available", type: "rent", district: "", landArea: false, pinned: false, verifiedAt: null, images: [] },
+    lookups: ["buildings"],
+    autofill: (name, v, lk): Record<string, string> => {
+      const b = name === "buildingId" ? buildingOf(lk, v) : undefined;
+      return b ? { district: String(b.district) } : {};
+    },
+    // A copy starts as a draft, without the "đã xem thực tế" / pinned marks of the original, and gets its own code when saved.
+    copy: (r) => ({ ...r, code: undefined, status: "draft", pinned: false, verifiedAt: null }),
+    beforeSave: (p, isNew, lk) => {
+      const b = buildingOf(lk, p.buildingId);
+      const title = String(p.title ?? "").trim() || [TYPE_VERB[String(p.type)], p.bedrooms != null ? `căn ${p.bedrooms}PN` : "căn hộ", p.areaM2 ? `${p.areaM2}m²` : "", b ? `tòa ${b.name}` : `phân khu ${p.district}`].filter(Boolean).join(" ");
+      return { ...p, title, ...(isNew ? { code: newCode(String(p.type)) } : {}) };
+    },
+  },
+  buildings: {
+    title: "Tòa nhà & phí quản lý",
+    singular: "tòa",
+    key: "id",
+    columns: [
+      { key: "name", label: "Tòa" },
+      { key: "district", label: "Phân khu" },
+      { key: "managementFee", label: "Phí quản lý", format: (v) => (v == null || v === "" ? "Theo BQL" : `${Number(v).toLocaleString("vi-VN")}đ/m²/tháng`) },
+    ],
+    fields: [
+      { name: "name", label: "Tên tòa", type: "text", required: true, placeholder: "S1.02", section: "Thông tin tòa" },
+      { name: "district", label: "Phân khu", type: "ref", ref: "districts", refKey: "name", placeholder: "— Chọn phân khu —", required: true, section: "Thông tin tòa" },
+      { name: "managementFee", label: "Phí quản lý (đồng / m² / tháng)", type: "number", nullable: true, placeholder: "12000", hint: "Chỉ ghi số, vd 12000. Để trống = website hiện “Theo BQL”. Khách thấy phí này ở mọi căn thuộc tòa.", section: "Thông tin tòa" },
+    ],
+    defaults: { district: "" },
+  },
+  districts: {
+    title: "Phân khu",
+    singular: "phân khu",
+    key: "id",
+    columns: [
+      { key: "sortOrder", label: "Thứ tự" },
+      { key: "name", label: "Phân khu" },
+    ],
+    fields: [
+      { name: "name", label: "Tên phân khu", type: "text", required: true, placeholder: "Sân Golf", hint: "Đổi tên thì mọi căn và tòa thuộc phân khu này tự đổi theo. Muốn xoá thì phải chuyển hết căn/tòa sang phân khu khác trước.", section: "Phân khu" },
+      { name: "sortOrder", label: "Thứ tự (nhỏ hiện trước)", type: "number", hint: "Thứ tự trong các ô chọn và bộ lọc trên website.", section: "Phân khu" },
+    ],
+    defaults: { sortOrder: 0 },
   },
   projects: {
     title: "Dự án",

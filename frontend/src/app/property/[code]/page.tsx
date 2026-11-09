@@ -15,7 +15,8 @@ import {
   seedProperties,
   TYPE_SLUG,
 } from "@/lib/api";
-import { areaLabel, pricePerM2, TYPE_LABEL } from "@/lib/format";
+import { areaLabel, feePerM2, pricePerM2, TYPE_LABEL } from "@/lib/format";
+import { LIVING_COSTS } from "@/lib/living-costs";
 import { videoFromUrl, verifiedLabel } from "@/lib/video";
 
 export const revalidate = 60;
@@ -72,11 +73,17 @@ export default async function DetailPage({
     ["area", "Diện tích", areaLabel(p)],
     ["bed", "Phòng ngủ", p.bedrooms != null ? `${p.bedrooms} phòng` : null],
     ["bath", "Phòng tắm", p.bathrooms != null ? `${p.bathrooms} phòng` : null],
-    ["floor", "Tầng", p.floorLabel],
-    ["compass", "Hướng ban công", p.direction],
+    ["floor", "Tòa", p.building?.name],
+    ["layers", "Tầng", p.floorLabel],
+    ["compass", "Hướng", p.direction],
     ["sofa", "Nội thất", p.furniture],
     ["doc", "Pháp lý", p.legal],
-    ["tag", "Mã căn", p.code],
+  ];
+  // Management fee comes from the building; the rest of the monthly costs are the same for every listing.
+  const fee = p.building?.managementFee;
+  const costs: [string, string][] = [
+    ["Phí quản lý", fee ? `${feePerM2(fee)} (≈ ${Math.round(fee * p.areaM2).toLocaleString("vi-VN")}đ/tháng)` : "Theo BQL"],
+    ...LIVING_COSTS.map((c): [string, string] => [c.label, c.value || "Liên hệ"]),
   ];
 
   const card =
@@ -94,7 +101,7 @@ export default async function DetailPage({
             {TYPE_NAME[p.type]}
           </Link>
           {"  ›  "}
-          {p.code}
+          {p.title}
         </nav>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-2">
@@ -139,7 +146,7 @@ export default async function DetailPage({
           <Gallery
             images={p.images}
             title={p.title}
-            video={videoFromUrl(p.videoUrl, `Video review ${p.code}`, p.images[0])}
+            video={videoFromUrl(p.videoUrl, `Video review ${p.title}`, p.images[0])}
           />
         </div>
       </div>
@@ -160,8 +167,8 @@ export default async function DetailPage({
               </p>
             </div>
             <div>
-              <p className="text-[11px] text-muted">Phí dịch vụ</p>
-              <p className="text-[24px] font-semibold text-esp">Theo BQL</p>
+              <p className="text-[11px] text-muted">Phí quản lý</p>
+              <p className="text-[24px] font-semibold text-esp">{feePerM2(fee)}</p>
             </div>
           </section>
 
@@ -188,6 +195,18 @@ export default async function DetailPage({
                     </div>
                   </div>
                 ))}
+            </dl>
+          </section>
+
+          <section className={card}>
+            <h2 className={h2}>Chi phí hàng tháng</h2>
+            <dl className="grid gap-2.5 sm:grid-cols-2">
+              {costs.map(([label, v]) => (
+                <div key={label} className="flex items-center justify-between gap-3 rounded bg-creamT px-3.5 py-3">
+                  <dt className="text-[13px] text-muted">{label}</dt>
+                  <dd className="text-right text-[13px] font-semibold text-ink">{v}</dd>
+                </div>
+              ))}
             </dl>
           </section>
 

@@ -34,6 +34,7 @@ const P: Record<string, string> = {
   doc: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h5",
   tag: "M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8zM7 8.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z",
   mute: "M11 5 6 9H2v6h4l5 4zM23 9l-6 6M17 9l6 6",
+  layers: "M12 2 2 7l10 5 10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
 };
 
 const FILLED: Record<string, string> = {

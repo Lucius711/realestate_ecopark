@@ -17,4 +17,7 @@ export function timeAgo(iso: string, now = Date.now()) {
   return h < 24 ? `${h} giờ trước` : `${Math.round(h / 24)} ngày trước`;
 }
 
+/** Management fee per m² per month, or "Theo BQL" while the building has none. */
+export const feePerM2 = (fee?: number | null) => (fee ? `${fee.toLocaleString("vi-VN")}đ/m²/tháng` : "Theo BQL");
+
 export const TYPE_LABEL = { rent: "CHO THUÊ", resale: "CHUYỂN NHƯỢNG", project: "DỰ ÁN" } as const;

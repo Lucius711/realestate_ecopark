@@ -40,6 +40,8 @@ export class Property {
   @Column("varchar", { nullable: true }) furniture: string | null;
   @Column("varchar", { nullable: true }) legal: string | null;
   @Index() @Column("varchar", { nullable: true }) projectSlug: string | null;
+  /** Tòa (see Building). Customers see the building, never the internal `code`. */
+  @Column("int", { nullable: true }) buildingId: number | null;
   @Index() @Column({ default: "available" }) status: PropertyStatus;
   /** Always first in the homepage "Nổi bật" rows. */
   @Column({ default: false }) pinned: boolean;
@@ -184,4 +186,24 @@ export class SentAlert {
   @CreateDateColumn({ type: "timestamptz" }) sentAt: Date;
 }
 
-export const ENTITIES = [Property, Project, Slide, Video, Testimonial, Lead, User, Favorite, SavedSearch, SentAlert];
+/** A building (tòa): its phân khu and monthly management fee. Listings pick one and inherit the phân khu in the admin form. */
+@Entity("buildings")
+@Check(`"managementFee" IS NULL OR "managementFee" >= 0`)
+export class Building {
+  @PrimaryGeneratedColumn() id: number;
+  @Index({ unique: true }) @Column() name: string;
+  @Column() district: string;
+  /** VND per m² per month; null = not announced yet (the site shows "Theo BQL"). */
+  @Column("int", { nullable: true }) managementFee: number | null;
+}
+
+/** A phân khu. Listings, buildings and saved searches store its name, so renaming one is cascaded (see AdminController). */
+@Entity("districts")
+export class District {
+  @PrimaryGeneratedColumn() id: number;
+  @Index({ unique: true }) @Column() name: string;
+  /** Smaller first in every dropdown. */
+  @Column("int", { default: 0 }) sortOrder: number;
+}
+
+export const ENTITIES = [Property, Building, District, Project, Slide, Video, Testimonial, Lead, User, Favorite, SavedSearch, SentAlert];

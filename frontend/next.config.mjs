@@ -19,7 +19,11 @@ const nextConfig = {
   poweredByHeader: false,
   headers: async () => [{ source: "/:path*", headers: securityHeaders }],
   images: {
-    remotePatterns: hosts.map((u) => ({ protocol: u.protocol.replace(":", ""), hostname: u.hostname, port: u.port, pathname: "/**" })),
+    remotePatterns: [
+      ...hosts.map((u) => ({ protocol: u.protocol.replace(":", ""), hostname: u.hostname, port: u.port, pathname: "/**" })),
+      // Our own subdomains (api., cdn. …): uploaded images still show if NEXT_PUBLIC_UPLOAD_URL is missing on Vercel.
+      { protocol: "https", hostname: "**.nguyenhongtuan.io.vn", pathname: "/**" },
+    ],
   },
 };
 

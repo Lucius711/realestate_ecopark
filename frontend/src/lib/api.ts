@@ -42,6 +42,10 @@ export const getProperties = (type?: PropertyType) =>
 export const getProperty = (code: string) =>
   get<Property | null>(`/properties/${encodeURIComponent(code)}`, () => S.properties.find((p) => p.code === code && p.status !== "draft") ?? null);
 
+/** Phân khu names in the order admin set; the six official ones when the API is down. */
+export const getDistricts = () =>
+  get<{ name: string }[]>("/districts", () => ["Rừng Cọ", "Quận Đảo", "Giáo dục", "Sân Golf", "Sáng tạo", "Aquabay"].map((name) => ({ name }))).then((l) => l.map((d) => d.name));
+
 export const getSlides = () => get<Slide[]>("/slides", () => S.slides.filter((s) => s.active));
 export const getVideos = () => get<Video[]>("/videos", () => S.videos);
 export const getTestimonials = () => get<Testimonial[]>("/testimonials", () => S.testimonials);

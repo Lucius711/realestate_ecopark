@@ -8,14 +8,6 @@ import AlertButton from "./AlertButton";
 import { Icon } from "../Icons";
 import type { Property } from "@/lib/types";
 
-const DISTRICTS = [
-  "Rừng Cọ",
-  "Quận Đảo",
-  "Giáo dục",
-  "Sân Golf",
-  "Sáng tạo",
-  "Aquabay",
-];
 const SORTS = {
   new: "Mới nhất",
   asc: "Giá thấp → cao",
@@ -26,10 +18,12 @@ const PER_PAGE = 9;
 /** Figma: listing page "Filter bar" + "Results" + pagination. Filters live in the URL so results are shareable. */
 export default function ListingBrowser({
   items,
+  districts,
   label,
   typeSlug,
 }: {
   items: Property[];
+  districts: string[];
   label: string;
   typeSlug: string;
 }) {
@@ -96,7 +90,7 @@ export default function ListingBrowser({
             onChange={(e) => set("district", e.target.value)}
           >
             <option value="">Phân khu</option>
-            {DISTRICTS.map((d) => (
+            {districts.map((d) => (
               <option key={d}>{d}</option>
             ))}
           </select>

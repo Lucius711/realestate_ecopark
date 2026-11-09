@@ -14,6 +14,8 @@ const NAV: { group: string; items: { href: string; label: string; icon: IconName
       { href: "/admin", label: "Tổng quan", icon: "grid" },
       { href: "/admin/leads", label: "Khách hàng", icon: "user" },
       { href: "/admin/properties", label: "Bất động sản", icon: "tag" },
+      { href: "/admin/districts", label: "Phân khu", icon: "pin" },
+      { href: "/admin/buildings", label: "Tòa nhà & phí QL", icon: "floor" },
       { href: "/admin/projects", label: "Dự án", icon: "map" },
     ],
   },

@@ -12,7 +12,9 @@ export default function ListingCard({ p }: { p: Property }) {
     ["bed", p.bedrooms != null ? `${p.bedrooms} PN` : null],
     ["bath", p.bathrooms != null ? `${p.bathrooms} WC` : null],
     ["area", areaLabel(p)],
-    ["floor", p.floorLabel],
+    ["floor", p.building ? `Tòa ${p.building.name}` : null],
+    ["layers", p.floorLabel],
+    ["compass", p.direction ?? null],
   ];
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-lg border border-lineL bg-white shadow-[0_6px_18px_rgba(51,38,26,0.06)] transition-shadow hover:shadow-[0_12px_28px_rgba(51,38,26,0.12)]">

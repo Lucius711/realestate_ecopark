@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { IsEmail, IsOptional, IsString, Length, Matches, ValidateIf } from "class-validator";
 import { In, Repository } from "typeorm";
-import { LISTED, Lead, PUBLIC, Project, Property, Slide, Testimonial, Video } from "./entities";
+import { Building, District, LISTED, Lead, PUBLIC, Project, Property, Slide, Testimonial, Video } from "./entities";
 import type { JwtUser } from "./auth";
 import { SlidingWindow } from "./rate-limit";
 
@@ -24,6 +24,8 @@ const leadLimit = new SlidingWindow<string>(5, 10 * 60 * 1000);
 export class PublicController {
   constructor(
     @InjectRepository(Property) private props: Repository<Property>,
+    @InjectRepository(Building) private buildings: Repository<Building>,
+    @InjectRepository(District) private districts: Repository<District>,
     @InjectRepository(Project) private projects: Repository<Project>,
     @InjectRepository(Slide) private slides: Repository<Slide>,
     @InjectRepository(Video) private videos: Repository<Video>,
@@ -35,14 +37,25 @@ export class PublicController {
   @Get("properties")
   listProperties(@Query("type") type?: string) {
     if (type && !["rent", "resale", "project"].includes(type)) return [];
-    return this.props.find({ where: { status: In(LISTED), ...(type ? { type: type as Property["type"] } : {}) }, order: { postedAt: "DESC" } });
+    return this.props.find({ where: { status: In(LISTED), ...(type ? { type: type as Property["type"] } : {}) }, order: { postedAt: "DESC" } }).then((l) => this.withBuilding(l));
+  }
+
+  /** Attach each listing's building (name, phí quản lý), so pages never need the internal id. */
+  private async withBuilding(list: Property[]) {
+    const byId = new Map((await this.buildings.find()).map((b) => [b.id, b]));
+    return list.map((p) => ({ ...p, building: (p.buildingId != null && byId.get(p.buildingId)) || null }));
   }
 
   @Get("properties/:code")
   async getProperty(@Param("code") code: string) {
     const p = await this.props.findOneBy({ code, status: In(PUBLIC) }); // sold listings keep their page
     if (!p) throw new NotFoundException();
-    return p;
+    return (await this.withBuilding([p]))[0];
+  }
+
+  @Get("districts")
+  listDistricts() {
+    return this.districts.find({ order: { sortOrder: "ASC", id: "ASC" } });
   }
 
   /** Newest first: the homepage banner shows the latest project. */

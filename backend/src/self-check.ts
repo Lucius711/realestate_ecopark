@@ -194,6 +194,30 @@ const post = (path: string, body: unknown, headers: Record<string, string> = {})
   assert.equal((await send("PUT", "/admin/properties/TEST-0001", { videoUrl: "https://evil.example/v" })).status, 400, "video link must be TikTok/YouTube");
   assert.equal((await send("PUT", "/admin/properties/TEST-0001", { videoUrl: "https://www.youtube.com/watch?v=abcdefghijk", verifiedAt: new Date().toISOString(), pinned: true })).status, 200);
   assert.equal((await send("PUT", "/admin/properties/TEST-0001", { verifiedAt: null, videoUrl: null })).status, 200, "clearing optional fields");
+  // phân khu: a managed list; renaming cascades, deleting a used one is refused
+  const dsList = async () => (await (await get("/districts")).json()) as { id: number; name: string }[];
+  assert((await dsList()).map((d) => d.name).includes("Quận Đảo"), "default phân khu are seeded");
+  assert.equal((await send("POST", "/admin/districts", { name: "Quận Đảo" })).status, 400, "phân khu name is unique");
+  const nd = (await (await send("POST", "/admin/districts", { name: "TEST-KHU", sortOrder: 5 })).json()) as { id: number };
+  assert.equal((await send("PUT", "/admin/properties/TEST-0001", { district: "Không có khu này" })).status, 400, "listing needs a listed phân khu");
+  assert.equal((await send("PUT", "/admin/properties/TEST-0001", { district: "TEST-KHU" })).status, 200);
+  assert.equal((await send("DELETE", `/admin/districts/${nd.id}`, {})).status, 400, "a phân khu in use can't be deleted");
+  assert.equal((await send("PUT", `/admin/districts/${nd.id}`, { name: "TEST-KHU-2" })).status, 200, "rename");
+  assert.equal(((await (await get("/properties/TEST-0001")).json()) as { district: string }).district, "TEST-KHU-2", "rename reaches listings");
+  assert.equal((await send("PUT", `/admin/districts/${nd.id}`, { name: "Aquabay" })).status, 400, "rename onto an existing name");
+  await send("PUT", "/admin/properties/TEST-0001", { district: "Quận Đảo" });
+  assert.equal((await send("DELETE", `/admin/districts/${nd.id}`, {})).status, 200, "unused phân khu can be deleted");
+  // buildings (tòa): public listings carry the building + its management fee; deleting a building keeps its listings
+  const bld = await send("POST", "/admin/buildings", { name: "TEST-S1", district: "Aquabay", managementFee: 12000 });
+  assert.equal(bld.status, 201, "building created");
+  const bldId = ((await bld.json()) as { id: number }).id;
+  assert.equal((await send("POST", "/admin/buildings", { name: "TEST-S1", district: "Aquabay", managementFee: null })).status, 400, "building name is unique");
+  assert.equal((await send("POST", "/admin/buildings", { name: "TEST-S2", district: "Aquabay", managementFee: -1 })).status, 400, "fee can't be negative");
+  assert.equal((await send("PUT", "/admin/properties/TEST-0001", { buildingId: bldId })).status, 200, "listing points at a building");
+  const withB = (await (await get("/properties/TEST-0001")).json()) as { building: { name: string; managementFee: number } };
+  assert.deepEqual([withB.building.name, withB.building.managementFee], ["TEST-S1", 12000], "detail carries its building");
+  assert.equal((await send("DELETE", `/admin/buildings/${bldId}`, {})).status, 200);
+  assert.equal(((await (await get("/properties/TEST-0001")).json()) as { building: unknown }).building, null, "listing survives its building");
   assert.equal((await send("DELETE", "/admin/properties/TEST-0001", {})).status, 200);
   const overviewBefore = (await (await get("/projects/eco-retreat")).json()).overviewImage;
   assert.equal((await send("PUT", "/admin/projects/eco-retreat", { overviewImage: "" })).status, 200, "optional overview image can be left empty");

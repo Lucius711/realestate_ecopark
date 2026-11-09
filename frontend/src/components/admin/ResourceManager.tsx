@@ -8,7 +8,7 @@ import Empty from "../Empty";
 import { EditDrawer, StatusSelect } from "./EditDrawer";
 import { TONE } from "./fields";
 import { toPayload, toValues, viMessage, type Row, type Values } from "./form";
-import { RESOURCES } from "./resources";
+import { RESOURCES, type Lookups } from "./resources";
 import { adminFetch } from "@/lib/adminApi";
 
 const firstImage = (v: unknown) => (Array.isArray(v) ? String(v[0] ?? "") : String(v ?? ""));
@@ -20,7 +20,8 @@ export default function ResourceManager({ resource }: { resource: string }) {
   const [loadErr, setLoadErr] = useState("");
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState("all");
-  const [editing, setEditing] = useState<{ row: Row | null; values: Values; start: string } | null>(null);
+  const [editing, setEditing] = useState<{ row: Row | null; values: Values; start: string; from?: string } | null>(null);
+  const [lookups, setLookups] = useState<Lookups>({});
   const [saveErr, setSaveErr] = useState("");
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
@@ -36,6 +37,9 @@ export default function ResourceManager({ resource }: { resource: string }) {
   useEffect(() => {
     load();
   }, [load]);
+  useEffect(() => {
+    for (const name of cfg.lookups ?? []) adminFetch<Row[]>(`/admin/${name}`).then((r) => setLookups((l) => ({ ...l, [name]: r })), () => {});
+  }, [cfg]);
 
   const open = useCallback(
     (row: Row | null) => {
@@ -45,6 +49,12 @@ export default function ResourceManager({ resource }: { resource: string }) {
     },
     [cfg],
   );
+
+  /** "Nhân bản": open the form as a new row, filled in from `row`, so a similar listing isn't typed again from scratch. */
+  const duplicate = (row: Row) => {
+    setSaveErr("");
+    setEditing({ row: null, values: toValues(cfg.fields, cfg.copy!(row)), start: JSON.stringify(toValues(cfg.fields, cfg.defaults)), from: String(row.title ?? row[cfg.key]) });
+  };
 
   // Deep links from the dashboard: ?status=deposit filters, ?new=1 opens the "add" form.
   useEffect(() => {
@@ -80,7 +90,7 @@ export default function ResourceManager({ resource }: { resource: string }) {
     try {
       const isNew = !editing.row;
       const raw = toPayload(cfg.fields, editing.values, isNew ? undefined : cfg.key);
-      const payload = cfg.beforeSave ? cfg.beforeSave(raw, isNew) : raw;
+      const payload = cfg.beforeSave ? cfg.beforeSave(raw, isNew, lookups) : raw;
       if (isNew) await adminFetch(`/admin/${resource}`, { method: "POST", body: payload });
       else await adminFetch(`/admin/${resource}/${encodeURIComponent(String(editing.row![cfg.key]))}`, { method: "PUT", body: payload });
       setEditing(null);
@@ -107,7 +117,14 @@ export default function ResourceManager({ resource }: { resource: string }) {
 
   async function remove(row: Row) {
     const label = String(row.title ?? row.name ?? row[cfg.key]);
-    const hint = resource === "properties" ? "\nMẹo: căn đã bán nên chuyển sang “Đã bán / đã cho thuê” thay vì xoá, để link cũ vẫn mở được." : "";
+    const hint =
+      resource === "properties"
+        ? "\nMẹo: căn đã bán nên chuyển sang “Đã bán / đã cho thuê” thay vì xoá, để link cũ vẫn mở được."
+        : resource === "buildings"
+          ? "\nCác căn thuộc tòa này vẫn còn, chỉ không còn gắn với tòa nào."
+          : resource === "districts"
+            ? "\nChỉ xoá được khi không còn căn hoặc tòa nào thuộc phân khu này."
+            : "";
     if (!window.confirm(`Xoá ${cfg.singular} "${label}"? Không thể hoàn tác.${hint}`)) return;
     try {
       await adminFetch(`/admin/${resource}/${encodeURIComponent(String(row[cfg.key]))}`, { method: "DELETE" });
@@ -150,7 +167,7 @@ export default function ResourceManager({ resource }: { resource: string }) {
         )}
         <label className="flex h-10 items-center gap-2 rounded border border-line bg-white px-3 text-[13px]">
           <Icon name="search" size={14} className="text-muted" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={resource === "properties" ? "Mã căn, tiêu đề…" : "Tìm…"} aria-label="Tìm kiếm" className="w-44 bg-transparent focus:outline-none" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={resource === "properties" ? "Tiêu đề, tầng, mã…" : "Tìm…"} aria-label="Tìm kiếm" className="w-44 bg-transparent focus:outline-none" />
         </label>
       </div>
 
@@ -203,7 +220,7 @@ export default function ResourceManager({ resource }: { resource: string }) {
                       ) : c.kind === "status" && statusField ? (
                         <StatusSelect field={statusField} value={String(r[c.key])} label={`Tình trạng ${String(r[cfg.key])}`} onChange={(v) => quickSet(r, c.key, v)} />
                       ) : c.format ? (
-                        c.format(r[c.key], r)
+                        c.format(r[c.key], r, lookups)
                       ) : (
                         String(r[c.key] ?? "")
                       )}
@@ -223,6 +240,11 @@ export default function ResourceManager({ resource }: { resource: string }) {
                     <button onClick={() => open(r)} className="mr-4 text-[12px] font-semibold text-gold hover:text-esp">
                       Sửa
                     </button>
+                    {cfg.copy && (
+                      <button onClick={() => duplicate(r)} className="mr-4 text-[12px] font-semibold text-esp hover:text-gold">
+                        Nhân bản
+                      </button>
+                    )}
                     <button onClick={() => remove(r)} className="text-[12px] font-semibold text-price hover:underline">
                       Xoá
                     </button>
@@ -236,10 +258,11 @@ export default function ResourceManager({ resource }: { resource: string }) {
 
       {editing && (
         <EditDrawer
-          title={editing.row ? `Sửa ${cfg.singular}: ${String(editing.row[cfg.key])}` : `Thêm ${cfg.singular}`}
+          title={editing.row ? `Sửa ${cfg.singular}: ${String(editing.row[cfg.key])}` : editing.from ? `Thêm ${cfg.singular} (nhân bản từ “${editing.from}”)` : `Thêm ${cfg.singular}`}
           fields={cfg.fields.filter((f) => !(editing.row && f.name === cfg.key))}
           values={editing.values}
-          set={(name, v) => setEditing((s) => s && { ...s, values: { ...s.values, [name]: v } })}
+          lookups={lookups}
+          set={(name, v) => setEditing((s) => s && { ...s, values: { ...s.values, [name]: v, ...cfg.autofill?.(name, v, lookups) } })}
           onSubmit={save}
           onClose={close}
           saving={saving}

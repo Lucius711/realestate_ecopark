@@ -70,9 +70,21 @@ export class PropertyDto {
   @IsOptional() @IsString() @Length(1, 50) furniture: string | null;
   @IsOptional() @IsString() @Length(1, 50) legal: string | null;
   @IsOptional() @Matches(SLUG, SLUG_MSG) @Length(1, 60) projectSlug: string | null;
+  @IsOptional() @IsInt() @Min(1) buildingId: number | null;
   @IsOptional() @IsIn(PROPERTY_STATUSES) status?: (typeof PROPERTY_STATUSES)[number];
   @IsOptional() @IsBoolean() pinned?: boolean;
   @IsOptional() @IsDateString() postedAt?: string;
+}
+
+export class DistrictDto {
+  @IsString() @Matches(/\S/, { message: "name không được để trống" }) @Length(1, 50) name: string;
+  @IsOptional() @IsInt() @Min(0) @Max(999) sortOrder?: number;
+}
+
+export class BuildingDto {
+  @IsString() @Length(1, 60) name: string;
+  @IsString() @Length(1, 50) district: string;
+  @IsOptional() @IsInt() @Min(0) @Max(1_000_000) managementFee: number | null;
 }
 
 class FactDto {
@@ -150,7 +162,7 @@ export class LeadStatusDto {
 }
 
 // Leads are created by customers via POST /leads; admins may only change their status.
-export const DTO = { properties: PropertyDto, projects: ProjectDto, slides: SlideDto, videos: VideoDto, testimonials: TestimonialDto, leads: LeadStatusDto } as const;
+export const DTO = { properties: PropertyDto, buildings: BuildingDto, districts: DistrictDto, projects: ProjectDto, slides: SlideDto, videos: VideoDto, testimonials: TestimonialDto, leads: LeadStatusDto } as const;
 export type Resource = keyof typeof DTO;
 
 // Nested errors (e.g. policies[0].title) come back as "policies.0.title: …".

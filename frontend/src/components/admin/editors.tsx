@@ -86,16 +86,17 @@ export function RepeatEditor({ f, id, value, set }: { f: Field; id: string; valu
 /** Dropdown of another table's rows, e.g. "Thuộc dự án" lists the projects by name. */
 export function RefSelect({ f, id, value, set }: { f: Field; id: string; value: string; set: (v: string) => void }) {
   const rows = useRows(f.ref!);
+  const key = f.refKey ?? "slug";
   return (
     <select id={id} value={value} onChange={(e) => set(e.target.value)} className={input} disabled={!rows}>
-      <option value="">{rows ? "— Không thuộc dự án nào —" : "Đang tải…"}</option>
+      <option value="">{rows ? (f.placeholder ?? "— Không thuộc dự án nào —") : "Đang tải…"}</option>
       {rows?.map((r) => (
-        <option key={String(r.slug)} value={String(r.slug)}>
-          {String(r.name)}
+        <option key={String(r[key])} value={String(r[key])}>
+          {String(r[f.refLabel ?? "name"])}
         </option>
       ))}
       {/* Keep a value that no longer matches a row visible instead of silently blanking it. */}
-      {rows && value && !rows.some((r) => r.slug === value) && <option value={value}>{value} (không còn tồn tại)</option>}
+      {rows && value && !rows.some((r) => String(r[key]) === value) && <option value={value}>{value} (không còn tồn tại)</option>}
     </select>
   );
 }

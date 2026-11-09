@@ -4,6 +4,15 @@ export type PropertyType = "rent" | "resale" | "project";
 /** available: listed · deposit: listed with "ĐÃ CỌC" · sold: page only, "ĐÃ GIAO DỊCH" · draft: hidden (admin only). */
 export type PropertyStatus = "available" | "deposit" | "sold" | "draft";
 
+/** A building (tòa) and its monthly management fee. */
+export interface Building {
+  id: number;
+  name: string;
+  district: string;
+  /** VND per m² per month; null = "Theo BQL". */
+  managementFee: number | null;
+}
+
 export interface Property {
   code: string;
   type: PropertyType;
@@ -31,6 +40,9 @@ export interface Property {
   furniture?: string | null;
   legal?: string | null;
   projectSlug?: string | null;
+  buildingId?: number | null;
+  /** Joined by the API; customers see the building, never the internal `code`. */
+  building?: Building | null;
   postedAt: string;
 }
 

@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import Shell from "@/components/Shell";
 import ListingBrowser from "@/components/listing/ListingBrowser";
 import RequestCta from "@/components/listing/RequestCta";
-import { getProperties, SLUG_TYPE } from "@/lib/api";
+import { getDistricts, getProperties, SLUG_TYPE } from "@/lib/api";
 
 const LABEL: Record<string, string> = { "for-rent": "Nhà cho thuê", "resale": "Nhà chuyển nhượng", "projects": "Hàng dự án" };
 
@@ -18,7 +18,7 @@ export default async function ListingPage(props: { params: Promise<{ type: strin
   const params = await props.params;
   const type = SLUG_TYPE[params.type];
   if (!type) notFound();
-  const items = await getProperties(type);
+  const [items, districts] = await Promise.all([getProperties(type), getDistricts()]);
   const label = LABEL[params.type];
 
   return (
@@ -46,7 +46,7 @@ export default async function ListingPage(props: { params: Promise<{ type: strin
         </div>
       </header>
       <Suspense>
-        <ListingBrowser items={items} label={label} typeSlug={params.type} />
+        <ListingBrowser items={items} districts={districts} label={label} typeSlug={params.type} />
       </Suspense>
       <RequestCta />
     </Shell>

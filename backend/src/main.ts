@@ -3,7 +3,7 @@ import { Module, RequestMethod, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
-import { ENTITIES } from "./entities";
+import { District, ENTITIES } from "./entities";
 import { PublicController } from "./public.controller";
 import { AdminController } from "./admin.controller";
 import { JwtModule } from "@nestjs/jwt";
@@ -78,10 +78,24 @@ export async function migrateLegacyData() {
 })
 class AppModule {}
 
+const DEFAULT_DISTRICTS = ["Rừng Cọ", "Quận Đảo", "Giáo dục", "Sân Golf", "Sáng tạo", "Aquabay"];
+
+/** First start: the 6 official phân khu. Every start: any name already used by a listing / building but missing from the list. */
+export async function seedDistricts(db: DataSource) {
+  const repo = db.getRepository(District);
+  const have = new Set((await repo.find()).map((d) => d.name));
+  const first = have.size === 0;
+  const used = (await db.query(`SELECT district FROM properties UNION SELECT district FROM buildings`)) as { district: string }[];
+  const want = [...(first ? DEFAULT_DISTRICTS : []), ...used.map((u) => u.district)].filter((n, i, a) => n && !have.has(n) && a.indexOf(n) === i);
+  if (want.length) await repo.save(want.map((name) => repo.create({ name, sortOrder: (DEFAULT_DISTRICTS.indexOf(name) + 1 || DEFAULT_DISTRICTS.length + 1) * 10 })));
+}
+
 async function bootstrap() {
   if (JWT_SECRET.length < 32) throw new Error("JWT_SECRET must be set and at least 32 characters (see .env.example)");
   await migrateLegacyData();
+  if (process.env.NODE_ENV === "production" && !process.env.R2_PUBLIC_URL) console.warn("[uploads] R2 is not configured: uploads go to the container's ./uploads (docker volume). Set R2_* in .env.prod for a CDN.");
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  await seedDistricts(app.get(DataSource));
   app.disable("x-powered-by");
   const https = (process.env.API_PUBLIC_URL ?? "").startsWith("https");
   app.use((_req: unknown, res: { setHeader(k: string, v: string): void }, next: () => void) => {

@@ -18,7 +18,10 @@ services:
     env_file: backend/.env.prod
     # Only the VPS's own nginx reaches it (see nginx.conf); never exposed to the internet directly.
     ports: ["127.0.0.1:4000:4000"]
+    # Uploaded images/PDFs when R2 isn't configured: without this volume they vanish on every deploy (the container is recreated).
+    volumes: [uploads:/app/uploads]
     restart: unless-stopped
 
 volumes:
   pgdata:
+  uploads:
