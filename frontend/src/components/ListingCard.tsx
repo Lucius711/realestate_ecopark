@@ -3,83 +3,66 @@ import Link from "next/link";
 import { Icon } from "./Icons";
 import FavoriteButton from "./FavoriteButton";
 import type { Property } from "@/lib/types";
-import { areaLabel, pricePerM2, timeAgo, TYPE_LABEL } from "@/lib/format";
-import { CONTACT } from "@/lib/contact";
+import { areaLabel, pricePerM2, TYPE_LABEL } from "@/lib/format";
 
-/** Figma: component "V2 / Listing Card" (listing + similar sections). */
+/** Grid card (listing, similar, project units, favorites). Same photo + bottom-gradient look as FeaturedCard. */
 export default function ListingCard({ p }: { p: Property }) {
+  // 0 bedrooms/bathrooms (shophouse, khối đế) carries no information, so hide it.
   const specs: [Parameters<typeof Icon>[0]["name"], string | null][] = [
-    ["bed", p.bedrooms != null ? `${p.bedrooms} PN` : null],
-    ["bath", p.bathrooms != null ? `${p.bathrooms} WC` : null],
+    ["bed", p.bedrooms ? `${p.bedrooms} PN` : null],
+    ["bath", p.bathrooms ? `${p.bathrooms} WC` : null],
     ["area", areaLabel(p)],
-    ["floor", p.building ? `Tòa ${p.building.name}` : null],
     ["layers", p.floorLabel],
     ["compass", p.direction ?? null],
   ];
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-lg border border-lineL bg-white shadow-[0_6px_18px_rgba(51,38,26,0.06)] transition-shadow hover:shadow-[0_12px_28px_rgba(51,38,26,0.12)]">
-      <div className="relative h-[250px] overflow-hidden">
-        <Image src={p.images[0]} alt="" fill sizes="(min-width:1280px) 384px, (min-width:768px) 50vw, 100vw" className={`object-cover transition-transform duration-500 group-hover:scale-105 ${p.status === "sold" ? "grayscale" : ""}`} loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent from-60% to-black/45" />
-        <div className="absolute inset-x-3 top-3 flex items-start justify-between">
-          <div className="flex gap-1.5">
-            <span className="rounded-[3px] bg-gold px-2.5 py-[5px] text-[11px] font-bold tracking-[0.08em] text-white">{TYPE_LABEL[p.type]}</span>
-            {p.status === "deposit" && <span className="rounded-[3px] bg-[#C98A1B] px-2 py-[5px] text-[11px] font-bold tracking-[0.08em] text-white">ĐÃ CỌC</span>}
-            {p.status === "sold" && <span className="rounded-[3px] bg-esp px-2 py-[5px] text-[11px] font-bold tracking-[0.08em] text-white">ĐÃ GIAO DỊCH</span>}
+    <article className="group relative flex w-full flex-col overflow-hidden rounded-xl bg-white shadow-[0_8px_22px_rgba(51,38,26,0.12)] transition-shadow hover:shadow-[0_14px_32px_rgba(51,38,26,0.2)]">
+      <div className="relative aspect-[4/5] overflow-hidden bg-sand sm:aspect-[5/4]">
+        <Image src={p.images[0]} alt="" fill sizes="(min-width:1280px) 384px, (min-width:640px) 50vw, 100vw" className={`object-cover transition-transform duration-500 group-hover:scale-105 ${p.status === "sold" ? "grayscale" : ""}`} loading="lazy" />
+        {/* whole card clickable; overlays below are pointer-events-none except favorite */}
+        <Link href={`/property/${p.code}`} aria-label={`${p.title} – ${p.priceLabel}`} className="absolute inset-0" />
+        <div className="pointer-events-none absolute inset-x-3 top-3 flex items-start justify-between">
+          <div className="flex flex-wrap gap-1.5">
+            <span className="rounded-full bg-gold px-2.5 py-1 text-[11px] font-bold text-white">{TYPE_LABEL[p.type]}</span>
+            {p.status === "deposit" && <span className="rounded-full bg-[#C98A1B] px-2.5 py-1 text-[11px] font-bold text-white">Đã cọc</span>}
+            {p.status === "sold" && <span className="rounded-full bg-esp px-2.5 py-1 text-[11px] font-bold text-white">Đã giao dịch</span>}
             {p.verifiedAt && p.status !== "sold" && (
-              <span title="Anh Tuấn đã trực tiếp kiểm tra căn này" className="flex items-center gap-1 rounded-[3px] bg-white px-2 py-[5px] text-[11px] font-semibold text-verified">
+              <span title="Anh Tuấn đã trực tiếp kiểm tra căn này" className="flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-verified">
                 <Icon name="check" size={12} /> Đã xem thực tế
               </span>
             )}
           </div>
-          <FavoriteButton code={p.code} className="relative z-10 flex size-[30px] items-center justify-center rounded-full bg-white text-esp hover:text-price" />
-        </div>
-        <div className="absolute inset-x-3 bottom-3 flex items-center justify-between">
-          {p.videoUrl ? (
-            <span className="flex items-center gap-1 rounded-[3px] bg-black/55 px-2 py-1 text-[11px] font-semibold text-white">
-              <Icon name="play" size={11} /> Video
+          <div className="flex shrink-0 items-center gap-1.5">
+            {p.videoUrl && (
+              <span className="flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-semibold text-white">
+                <Icon name="play" size={11} /> Video
+              </span>
+            )}
+            <span className="flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-semibold text-white">
+              <Icon name="cam" size={12} /> {p.images.length}
             </span>
-          ) : (
-            <span />
-          )}
-          <span className="flex items-center gap-1 rounded-[3px] bg-black/55 px-2 py-1 text-[11px] font-semibold text-white">
-            <Icon name="cam" size={12} /> {p.images.length}
-          </span>
+            <FavoriteButton code={p.code} className="pointer-events-auto relative z-10 flex size-[28px] items-center justify-center rounded-full bg-white/95 text-esp hover:text-price" />
+          </div>
         </div>
-      </div>
-      <div className="flex flex-1 flex-col gap-2 px-[18px] py-4">
-        <p className="flex items-baseline gap-2">
-          <span className="text-[20px] font-bold text-price">{p.priceLabel}</span>
-          <span className="text-[12px] text-muted">· {pricePerM2(p)}</span>
-        </p>
-        <h3 className="text-[16px] font-semibold text-ink">
-          {/* stretched link: whole card is clickable, Zalo button stays separately clickable */}
-          <Link href={`/property/${p.code}`} className="after:absolute after:inset-0">
-            {p.title}
-          </Link>
-        </h3>
-        <ul className="flex flex-wrap gap-x-4 gap-y-1">
-          {specs
-            .filter(([, v]) => v)
-            .map(([icon, v]) => (
-              <li key={icon} className="flex items-center gap-[5px] text-[13px] text-ink">
-                <Icon name={icon} size={15} className="text-gold" /> {v}
-              </li>
-            ))}
-        </ul>
-        <p className="flex items-center gap-[5px] text-[13px] text-muted">
-          <Icon name="pin" size={14} /> Phân khu {p.district}, Ecopark
-        </p>
-        <div className="mt-auto flex items-center justify-between border-t border-lineL pt-3">
-          <span className="flex items-center gap-2 text-[12px] text-muted">
-            <span className="relative size-7 overflow-hidden rounded-full">
-              <Image src="/images/tuan-portrait.webp" alt="" fill sizes="28px" className="object-cover" />
-            </span>
-            Nguyễn Tuấn · {timeAgo(p.postedAt)}
-          </span>
-          <a href={CONTACT.zalo} target="_blank" rel="noopener noreferrer" className="relative z-10 flex items-center gap-1.5 rounded border border-zalo px-3 py-1.5 text-[12px] font-semibold text-zalo hover:bg-zalo hover:text-white">
-            <Icon name="phone" size={13} /> Zalo
-          </a>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col bg-gradient-to-t from-espDeep via-espDeep/85 to-transparent px-4 pb-4 pt-24 text-white">
+          <h3 className="line-clamp-2 text-[19px] font-bold leading-snug">{p.title}</h3>
+          <p className="mt-0.5 text-[12px] text-white/75">
+            Phân khu {p.district}
+            {p.building ? ` · Tòa ${p.building.name}` : ""} · Ecopark
+          </p>
+          <p className="mt-1.5 flex items-baseline gap-2">
+            <span className="text-[22px] font-bold leading-tight text-goldL">{p.priceLabel}</span>
+            <span className="text-[12px] text-white/70">· {pricePerM2(p)}</span>
+          </p>
+          <ul className="mt-2.5 flex flex-wrap gap-x-3.5 gap-y-1 border-t border-white/20 pt-2.5 text-[12.5px]">
+            {specs
+              .filter(([, v]) => v)
+              .map(([icon, v]) => (
+                <li key={icon} className="flex items-center gap-1">
+                  <Icon name={icon} size={14} className="text-goldL" /> {v}
+                </li>
+              ))}
+          </ul>
         </div>
       </div>
     </article>
